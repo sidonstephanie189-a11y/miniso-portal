@@ -3,89 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MINISO – Member Portal</title>
+    <title>MINISO Member Portal — DEMO</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="logo">MINISO</div>
-        <nav>
-            <a href="#home">Home</a>
-            <a href="#plans">Plans</a>
-            <a href="#rewards">Rewards</a>
-            <a href="#about">About</a>
-            <a href="#contact">Contact</a>
-            <a href="admin.html" class="admin-link">Admin Panel</a>
-        </nav>
-    </header>
+    <!-- DEMO BANNER -->
+    <div class="demo-banner">
+        ⚠️ DEMO / SIMULATION ONLY — NOT REAL MONEY — FOR EDUCATIONAL PURPOSES ⚠️
+    </div>
 
-    <!-- Home Section -->
-    <main>
-        <section id="home" class="hero">
-            <h1>Welcome to MINISO Member Portal</h1>
-            <p>Your trusted platform — earn rewards and grow with us!</p>
-            <a href="#plans" class="btn">View Plans</a>
-        </section>
+    <!-- NAVIGATION -->
+    <nav class="navbar">
+        <div class="logo">🌸 MINISO</div>
+        <ul class="nav-links">
+            <li><a href="#home" class="nav-link active">Home</a></li>
+            <li><a href="#plans" class="nav-link">Plans</a></li>
+            <li><a href="#orders" class="nav-link">My Orders</a></li>
+            <li><a href="#account" class="nav-link">Account</a></li>
+            <li><a href="admin.html" class="admin-btn">Admin Panel</a></li>
+        </ul>
+    </nav>
 
-        <!-- Plans Section — Circular Buttons Style -->
-        <section id="plans" class="plans-section">
-            <h2>Choose Your Plan</h2>
-            <p>Pick the plan that fits you best</p>
-            
-            <div class="plan-circles">
-                <div class="plan-circle" onclick="selectPlan('Hourly Plan')">
-                    Hourly Plan
+    <!-- HOME SECTION -->
+    <section id="home" class="section active">
+        <div class="container">
+            <div class="profile-card">
+                <div class="profile-info">
+                    <div class="avatar">👤</div>
+                    <div>
+                        <h3>Hello, Member! 💖</h3>
+                        <span class="vip-badge">VIP 1 — Demo</span>
+                    </div>
                 </div>
-                <div class="plan-circle" onclick="selectPlan('Lock-In Plan')">
-                    Lock-In Plan
-                </div>
-                <div class="plan-circle" onclick="selectPlan('Premium Plan')">
-                    Premium Plan
+                <div class="balance-card">
+                    <p class="label">Demo Balance</p>
+                    <h1 class="balance">$5,000.00</h1>
+                    <p class="profit">Demo Profit: <span class="green">+$150.00</span></p>
+                    <button class="btn-primary">+ Add Demo Funds</button>
                 </div>
             </div>
-            
-            <div id="planResult" class="plan-result"></div>
-        </section>
 
-        <!-- Everyday Rewards — Blind Box Style -->
-        <section id="rewards" class="rewards-section">
-            <h2>🎁 Everyday Rewards</h2>
-            <p>Click to open — get ₱5 to ₱20 instantly!</p>
-
-            <div class="blind-box-container">
-                <div class="blind-box" onclick="openBlindBox(this)">❓</div>
-                <div class="blind-box" onclick="openBlindBox(this)">❓</div>
-                <div class="blind-box" onclick="openBlindBox(this)">❓</div>
-                <div class="blind-box" onclick="openBlindBox(this)">❓</div>
-                <div class="blind-box" onclick="openBlindBox(this)">❓</div>
+            <div class="daily-checkin">
+                <h3>✨ Daily Bonus</h3>
+                <div class="checkin-card">
+                    <div class="bonus-amount">$10</div>
+                    <div>
+                        <p>Claim every 24 hours</p>
+                        <button id="claimBtn" class="btn-secondary">Claim Now</button>
+                    </div>
+                </div>
             </div>
 
-            <div class="reward-result" id="rewardResult"></div>
-            
-            <div class="reward-history">
-                <h3>Your Rewards History</h3>
-                <ul id="historyList"></ul>
-                <p id="totalEarned">Total Earned: ₱0</p>
+            <div class="quick-actions">
+                <button class="action-btn">💎 Deposit Demo</button>
+                <button class="action-btn">💰 Withdraw Demo</button>
+                <button class="action-btn">👥 Team</button>
+                <button class="action-btn">🎁 Rewards</button>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- About Section -->
-        <section id="about" class="about-section">
-            <h2>About Us</h2>
-            <p>MINISO Member Portal — your lifestyle and rewards platform. We bring you quality products and exciting rewards every day!</p>
-        </section>
+    <!-- PLANS SECTION -->
+    <section id="plans" class="section">
+        <div class="container">
+            <h2>✨ Choose Your Plan</h2>
+            <p class="subtitle">All plans are for DEMO / SIMULATION purposes only</p>
+            
+            <div class="plans-grid">
+                <div class="plan-card">
+                    <span class="plan-tag">Starter</span>
+                    <h3>Pink Blossom</h3>
+                    <p class="price">$100 <small>(Demo)</small></p>
+                    <ul class="plan-features">
+                        <li>Daily Demo Income: $5</li>
+                        <li>Duration: 30 Days</li>
+                        <li>Limit: 1 per user</li>
+                    </ul>
+                    <button class="btn-plan" data-plan="Pink Blossom" data-price="100">Select Plan</button>
+                </div>
 
-        <!-- Contact Section -->
-        <section id="contact" class="contact-section">
-            <h2>Contact Us</h2>
-            <p>Email: support@miniso-portal.local | Location: Angeles City, Pampanga</p>
-        </section>
-    </main>
+                <div class="plan-card featured">
+                    <span class="plan-tag popular">Popular</span>
+                    <h3>Lavender Premium</h3>
+                    <p class="price">$500 <small>(Demo)</small></p>
+                    <ul class="plan-features">
+                        <li>Daily Demo Income: $30</li>
+                        <li>Duration: 60 Days</li>
+                        <li>Unlimited purchase</li>
+                    </ul>
+                    <button class="btn-plan featured-btn" data-plan="Lavender Premium" data-price="500">Select Plan</button>
+                </div>
 
-    <footer>
-        <p>&copy; 2026 MINISO Member Portal — For Educational Purposes Only</p>
-    </footer>
+                <div class="plan-card">
+                    <span class="plan-tag">VIP</span>
+                    <h3>Mint Luxury</h3>
+                    <p class="price">$2,000 <small>(Demo)</small></p>
+                    <ul class="plan-features">
+                        <li>Daily Demo Income: $150</li>
+                        <li>Duration: 180 Days</li>
+                        <li>Unlimited purchase</li>
+                    </ul>
+                    <button class="btn-plan" data-plan="Mint Luxury" data-price="2000">Select Plan</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ORDERS SECTION -->
+    <section id="orders" class="section">
+        <div class="container">
+            <h2>📋 My Demo Orders</h2>
+            <div id="ordersList" class="orders-list">
+                <p class="empty-text">No orders yet. Select a plan to start! 💜</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ACCOUNT SECTION -->
+    <section id="account" class="section">
+        <div class="container">
+            <h2>👤 My Account</h2>
+            <div class="account-grid">
+                <div class="account-card">
+                    <p>Total Demo Deposit</p>
+                    <h3 id="totalDeposit">$0.00</h3>
+                </div>
+                <div class="account-card">
+                    <p>Total Demo Withdraw</p>
+                    <h3 id="totalWithdraw">$0.00</h3>
+                </div>
+                <div class="account-card">
+                    <p>Active Orders</p>
+                    <h3 id="activeOrders">0</h3>
+                </div>
+                <div class="account-card">
+                    <p>Team Members</p>
+                    <h3>0</h3>
+                </div>
+            </div>
+            <div class="history-section">
+                <h3>Transaction History (Demo)</h3>
+                <div id="historyList" class="history-list">
+                    <p class="empty-text">No transactions yet! 💖</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BOTTOM NAV -->
+    <div class="bottom-nav">
+        <a href="#home" class="bot-nav-link active" data-section="home">🏠 Home</a>
+        <a href="#plans" class="bot-nav-link" data-section="plans">🛍️ Plans</a>
+        <a href="#orders" class="bot-nav-link" data-section="orders">📋 Orders</a>
+        <a href="#account" class="bot-nav-link" data-section="account">👤 Account</a>
+    </div>
 
     <script src="script.js"></script>
 </body>
