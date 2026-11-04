@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MINISO Member Portal</title>
+    <title>MINISO x Sanrio Member Portal — DEMO</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -12,67 +12,72 @@
         ⚠️ DEMO / SIMULATION ONLY — NOT REAL MONEY — EDUCATIONAL PURPOSES ⚠️
     </div>
 
-    <!-- 🌸 MINISO PAPER BAG SPLASH SCREEN -->
+    <!-- 🌸 SPLASH SCREEN -->
     <div id="splashScreen" class="splash-overlay">
         <div class="splash-container">
-            <!-- Official MINISO Paper Bag -->
+            <!-- MINISO Paper Bag with Sanrio Characters -->
             <div id="paperBag" class="miniso-paperbag">
                 <div class="bag-handles">
                     <div class="handle left"></div>
                     <div class="handle right"></div>
                 </div>
                 <div class="bag-front">
-                    <div class="miniso-brand">
-                        <span class="miniso-logo">MINISO</span>
-                        <span class="miniso-tagline">Life is for Fun ✨</span>
-                    </div>
-                    <div class="sanrio-characters">
+                    <div class="sanrio-char-top">
                         <span class="char">🐱</span>
                         <span class="char">🎀</span>
                         <span class="char">🍡</span>
+                    </div>
+                    <div class="miniso-brand">
+                        <span class="miniso-logo">MINISO</span>
+                        <span class="miniso-tagline">Life is Sweet ✨</span>
+                    </div>
+                    <div class="sanrio-char-bottom">
                         <span class="char">💙</span>
                         <span class="char">🌸</span>
+                        <span class="char">🐻</span>
                     </div>
                     <p class="tap-hint">Tap to open 💌</p>
                 </div>
             </div>
 
-            <!-- LOGIN / REGISTER PANEL (Hidden until bag opens) -->
+            <!-- LOGIN / REGISTER -->
             <div id="authPanel" class="auth-panel hidden">
+                <div class="panel-sanrio-decor">
+                    <span>🐱</span><span>🎀</span><span>💙</span>
+                </div>
                 <div class="panel-logo">
                     <span class="logo-icon">🌸</span>
                     <span class="logo-text">MINISO</span>
+                    <span class="logo-sub">× Sanrio Friends</span>
                 </div>
 
                 <div class="auth-tabs">
-                    <button class="auth-tab active" data-tab="login">Login</button>
-                    <button class="auth-tab" data-tab="register">Register</button>
+                    <button class="auth-tab active" data-tab="login">Welcome Back 💖</button>
+                    <button class="auth-tab" data-tab="register">Join Us ✨</button>
                 </div>
 
                 <!-- LOGIN FORM -->
                 <div id="loginForm" class="auth-form">
-                    <h3>Welcome Back! 💖</h3>
-                    <input type="text" id="loginUser" placeholder="Username" class="auth-input">
-                    <input type="password" id="loginPass" placeholder="Password" class="auth-input">
-                    <button id="loginBtn" class="auth-btn primary">Enter Portal</button>
-                    <p class="auth-note">Demo: any username/password works</p>
+                    <h3>Hello, Friend! 🐾</h3>
+                    <input type="text" id="loginUser" placeholder="Your Username 🐱" class="auth-input">
+                    <input type="password" id="loginPass" placeholder="Your Password 🔒" class="auth-input">
+                    <button id="loginBtn" class="auth-btn primary">Enter Portal 🌸</button>
+                    <p class="auth-note">Demo: Create any account — no real funds</p>
                 </div>
 
                 <!-- REGISTER FORM -->
                 <div id="registerForm" class="auth-form hidden">
-                    <h3>Join the Family! ✨</h3>
-                    <input type="text" id="regUser" placeholder="Create Username" class="auth-input">
-                    <input type="password" id="regPass" placeholder="Create Password" class="auth-input">
-                    <input type="text" id="refCode" placeholder="Referral Code (optional)" class="auth-input">
-                    <button id="registerBtn" class="auth-btn secondary">Register Now</button>
+                    <h3>Make New Friends! 🎀</h3>
+                    <input type="text" id="regUser" placeholder="Pick a Cute Username ✨" class="auth-input">
+                    <input type="password" id="regPass" placeholder="Set a Password 🔒" class="auth-input">
+                    <input type="text" id="refCode" placeholder="Invite Code (if any) 💌" class="auth-input">
+                    <button id="registerBtn" class="auth-btn secondary">Join the Family 💖</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ==========================================
-        MAIN DASHBOARD CONTENT (Visible AFTER LOGIN)
-        ========================================== -->
+    <!-- MAIN DASHBOARD -->
     <div id="mainDashboard" class="main-hidden">
         <!-- TOP NAV -->
         <nav class="miniso-nav">
@@ -84,42 +89,42 @@
                 <li><a href="#home" class="nav-link active">🏠 Home</a></li>
                 <li><a href="#plans" class="nav-link">🛍️ Plans</a></li>
                 <li><a href="#redeem" class="nav-link">🎁 Redeem</a></li>
-                <li><a href="#team" class="nav-link">👥 Team</a></li>
-                <li><a href="#account" class="nav-link">💳 Account</a></li>
-                <li><a href="#support" class="nav-link">💬 Support</a></li>
+                <li><a href="#team" class="nav-link">👫 Team</a></li>
+                <li><a href="#account" class="nav-link">💎 Account</a></li>
+                <li><a href="#support" class="nav-link">💬 Help</a></li>
                 <li><a href="admin.html" class="admin-link">🔐 Admin</a></li>
             </ul>
-            <button id="logoutBtn" class="logout-btn">🚪 Logout</button>
+            <button id="logoutBtn" class="logout-btn">🚪 Bye~</button>
         </nav>
 
-        <!-- HOME SECTION -->
+        <!-- HOME -->
         <section id="home" class="section active">
             <div class="container">
                 <div class="welcome-banner">
-                    <span class="hello-char">🐾</span>
+                    <span class="hello-char">🐱</span>
                     <div>
                         <h2>Hi, <span id="userName">Friend</span>! 💖</h2>
-                        <p>Let's make today wonderful ✨</p>
+                        <p>Let's make today magical ✨</p>
                     </div>
                 </div>
 
                 <div class="balance-card-big">
-                    <p class="bal-label">Your Demo Balance</p>
+                    <p class="bal-label">Your Sparkly Balance 💎</p>
                     <h1 class="bal-amount">$<span id="dispBalance">5000.00</span></h1>
-                    <p class="bal-profit">Total Profit: <span class="green">+$<span id="dispProfit">0.00</span></span></p>
+                    <p class="bal-profit">Total Joy: <span class="green">+$<span id="dispProfit">0.00</span></span></p>
                     <div class="bal-buttons">
-                        <button id="quickRecharge" class="btn-pink">💳 Recharge</button>
-                        <button id="quickWithdraw" class="btn-mint">💰 Withdraw</button>
+                        <button id="quickRecharge" class="btn-pink">💳 Add Sparkles</button>
+                        <button id="quickWithdraw" class="btn-mint">💙 Withdraw</button>
                     </div>
                 </div>
 
                 <div class="daily-card">
                     <div class="daily-icon">🎁</div>
                     <div>
-                        <p class="daily-label">Daily Bonus</p>
+                        <p class="daily-label">Daily Gift 🎀</p>
                         <p class="daily-amount">$10.00</p>
                     </div>
-                    <button id="dailyClaimBtn" class="claim-btn">Claim Now</button>
+                    <button id="dailyClaimBtn" class="claim-btn">Claim Now ✨</button>
                 </div>
 
                 <div class="features-grid">
@@ -143,7 +148,7 @@
             </div>
         </section>
 
-        <!-- PLANS SECTION -->
+        <!-- PLANS -->
         <section id="plans" class="section">
             <div class="container">
                 <h2>✨ Pick Your Plan</h2>
@@ -154,18 +159,18 @@
             </div>
         </section>
 
-        <!-- REDEEM SECTION -->
+        <!-- REDEEM -->
         <section id="redeem" class="section">
             <div class="container">
-                <h2>🎁 Redemption Code</h2>
-                <p class="subtext">Enter code from Admin to add funds</p>
+                <h2>🎁 Gift Code</h2>
+                <p class="subtext">Enter magic code from Admin ✨</p>
                 <div class="cute-card">
                     <input type="text" id="redeemCodeInput" placeholder="Type your code here 🎀" class="cute-input">
-                    <button id="redeemGo" class="btn-pink full-width">Redeem Now ✨</button>
+                    <button id="redeemGo" class="btn-pink full-width">Redeem Now 💖</button>
                     <p id="redeemStatus" class="status-text"></p>
                 </div>
                 <div class="cute-card mt-20">
-                    <h3>📜 My Codes</h3>
+                    <h3>📜 My Gifts</h3>
                     <div id="redeemLog">
                         <p class="empty-cute">Nothing here yet~ 🐱</p>
                     </div>
@@ -173,19 +178,19 @@
             </div>
         </section>
 
-        <!-- TEAM SECTION -->
+        <!-- TEAM -->
         <section id="team" class="section">
             <div class="container">
-                <h2>👥 My Team</h2>
-                <p class="subtext">L1: 30% | L2: 5% | L3: 1% Commission</p>
+                <h2>👫 My Friends</h2>
+                <p class="subtext">L1: 30% 💖 | L2: 5% 💙 | L3: 1% 💛</p>
                 
                 <div class="stats-row">
                     <div class="stat-box pink">
-                        <p>Team Deposit</p>
+                        <p>Team Sparkles</p>
                         <h3>$<span id="teamDeposit">0.00</span></h3>
                     </div>
                     <div class="stat-box mint">
-                        <p>Commissions</p>
+                        <p>My Rewards</p>
                         <h3>$<span id="teamComm">0.00</span></h3>
                     </div>
                     <div class="stat-box lavender">
@@ -199,15 +204,15 @@
                 </div>
 
                 <div class="cute-card mt-20">
-                    <h3>🔗 Invite Link</h3>
+                    <h3>🔗 Invite a Friend</h3>
                     <div class="link-row">
                         <input type="text" id="myRefLink" value="" readonly class="link-input">
-                        <button id="copyLinkBtn" class="btn-mint">Copy</button>
+                        <button id="copyLinkBtn" class="btn-mint">Copy 💌</button>
                     </div>
                 </div>
 
                 <div class="cute-card mt-20">
-                    <h3>💌 Commission History</h3>
+                    <h3>💌 Rewards History</h3>
                     <div id="commLog">
                         <p class="empty-cute">Invite friends to earn~ 🎀</p>
                     </div>
@@ -215,17 +220,17 @@
             </div>
         </section>
 
-        <!-- ACCOUNT SECTION -->
+        <!-- ACCOUNT -->
         <section id="account" class="section">
             <div class="container">
-                <h2>💎 My Account</h2>
+                <h2>💎 My Sparkles</h2>
                 <div class="stats-row">
                     <div class="stat-box pink">
-                        <p>Total Deposit</p>
+                        <p>Added</p>
                         <h3>$<span id="accTotalDep">0.00</span></h3>
                     </div>
                     <div class="stat-box mint">
-                        <p>Total Withdraw</p>
+                        <p>Withdrawn</p>
                         <h3>$<span id="accTotalWith">0.00</span></h3>
                     </div>
                     <div class="stat-box lavender">
@@ -239,39 +244,39 @@
                 </div>
 
                 <div class="cute-card mt-20">
-                    <h3>💳 Recharge</h3>
-                    <input type="number" id="depAmount" placeholder="Enter amount $" class="cute-input">
+                    <h3>💳 Add Sparkles</h3>
+                    <input type="number" id="depAmount" placeholder="How much? $" class="cute-input">
                     <button id="doRecharge" class="btn-pink full-width">Add Demo Funds ✨</button>
                 </div>
 
                 <div class="cute-card mt-20">
-                    <h3>💰 Withdraw</h3>
-                    <input type="number" id="withAmount" placeholder="Enter amount $" class="cute-input">
-                    <button id="doWithdraw" class="btn-mint full-width">Request Withdraw 💌</button>
+                    <h3>💙 Withdraw</h3>
+                    <input type="number" id="withAmount" placeholder="How much? $" class="cute-input">
+                    <button id="doWithdraw" class="btn-mint full-width">Request 💌</button>
                 </div>
 
                 <div class="cute-card mt-20">
-                    <h3>📋 Transactions</h3>
+                    <h3>📋 Activity</h3>
                     <div id="transLog">
-                        <p class="empty-cute">No activity yet~ 🌸</p>
+                        <p class="empty-cute">No adventures yet~ 🌸</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- SUPPORT SECTION -->
+        <!-- SUPPORT -->
         <section id="support" class="section">
             <div class="container">
-                <h2>💬 Help & Community</h2>
+                <h2>💬 Help & Friends</h2>
                 <div class="cute-card">
                     <h3>📞 Official Telegram</h3>
                     <p id="tgText">Loading link...</p>
                     <a id="tgLink" href="#" target="_blank" class="btn-pink full-width mt-10">Join Group 💌</a>
                 </div>
                 <div class="cute-card mt-20">
-                    <h3>📧 Customer Care</h3>
+                    <h3>📧 Say Hello</h3>
                     <p id="supportText">Loading info...</p>
-                    <p class="tiny-note mt-10">Demo purposes only — not real service</p>
+                    <p class="tiny-note mt-10">Demo only — not real service 💖</p>
                 </div>
             </div>
         </section>
