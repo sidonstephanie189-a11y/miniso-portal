@@ -1,49 +1,5 @@
 // ==========================================
 // MINISO Member Portal — DEMO VERSION
-// FOR EDUCATIONAL / SIMULATION PURPOSES ONLY
-// ==========================================
-
-// Data storage
-let orders = JSON.parse(localStorage.getItem('demoOrders')) || [];
-let balance = parseFloat(localStorage.getItem('demoBalance')) || 5000;
-let totalDeposit = parseFloat(localStorage.getItem('demoTotalDeposit')) || 0;
-let totalWithdraw = parseFloat(localStorage.getItem('demoTotalWithdraw')) || 0;
-let lastClaim = localStorage.getItem('demoLastClaim') || null;
-
-// DOM Elements
-const navLinks = document.querySelectorAll('.nav-link, .bot-nav-link');
-const sections = document.querySelectorAll('.section');
-const balanceEl = document.querySelector('.balance');
-const profitEl = document.querySelector('.profit .green');
-const ordersListEl = document.getElementById('ordersList');
-const totalDepositEl = document.getElementById('totalDeposit');
-const totalWithdrawEl = document.getElementById('totalWithdraw');
-const activeOrdersEl = document.getElementById('activeOrders');
-const historyListEl = document.getElementById('historyList');
-const claimBtn = document.getElementById('claimBtn');
-
-// Initialize
-updateUI();
-checkClaimStatus();
-
-// Navigation
-navLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const targetId = link.getAttribute('data-section') || link.getAttribute('href').substring(1);
-        
-        // Update sections
-        sections.forEach(sec => sec.classList.remove('active'));
-        document.getElementById(targetId).classList.add('active');
-        
-        // Update nav active states
-        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-        document.querySelectorAll('.bot-nav-link').forEach(l => l.classList.remove('active'));
-        document.querySelectorAll(`[data-section="${targetId}"], [href="#${targetId}"]`).forEach(l => l.classList.add('active'));
-    });
-});
-// ==========================================
-// MINISO Member Portal — DEMO VERSION
 // DYNAMIC PLANS from Admin Panel
 // ==========================================
 
@@ -86,6 +42,8 @@ function getPlans() {
 
 // Render plans on page
 function renderPlans() {
+    if (!plansContainer) return;
+    
     const plans = getPlans();
     
     plansContainer.innerHTML = plans.map(plan => {
@@ -108,7 +66,99 @@ function renderPlans() {
                     data-daily="${plan.daily}"
                     data-days="${plan.days}">
                     Select Plan
-                </
+                </button>
+            </div>
+        `;
+    }).join('');
+
+    // Re-attach click listeners
+    attachPlanListeners();
+}
+
+// Attach click events to plan buttons
+function attachPlanListeners() {
+    document.querySelectorAll('.btn-plan').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const planName = btn.getAttribute('data-plan');
+            const price = parseFloat(btn.getAttribute('data-price'));
+            const daily = parseFloat(btn.getAttribute('data-daily'));
+            const days = parseInt(btn.getAttribute('data-days'));
+            
+            if (balance < price) {
+                alert('⚠️ Demo balance is insufficient! Add demo funds first 💜');
+                return;
+            }
+            
+            balance -= price;
+            totalDeposit += price;
+            
+            const newOrder = {
+                id: Date.now(),
+                plan: planName,
+                price: price,
+                dailyIncome: daily,
+                daysLeft: days,
+                date: new Date().toLocaleString(),
+                active: true
+            };
+            
+            orders.push(newOrder);
+            saveData();
+            updateUI();
+            
+            alert(`✅ Plan Selected: ${planName}\n$${price} deducted from demo balance 💖`);
+        });
+    });
+}
+
+// Navigation
+navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute('data-section') || link.getAttribute('href').substring(1);
+        
+        // Update sections
+        sections.forEach(sec => sec.classList.remove('active'));
+        const targetSection = document.getElementById(targetId);
+        if (targetSection) targetSection.classList.add('active');
+        
+        // Update nav active states
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        document.querySelectorAll('.bot-nav-link').forEach(l => l.classList.remove('active'));
+        document.querySelectorAll(`[data-section="${targetId}"], [href="#${targetId}"]`).forEach(l => l.classList.add('active'));
+        
+        // Re-render plans when Plans section opens
+        if (targetId === 'plans') {
+            renderPlans();
+        }
+    });
+});
+
+// Claim Daily Bonus
+if (claimBtn) {
+    claimBtn.addEventListener('click', () => {
+        const now = new Date();
+        
+        if (lastClaim) {
+            const lastDate = new Date(lastClaim);
+            const hoursPassed = (now - lastDate) / (1000 * 60 * 60);
+            
+            if (hoursPassed < 24) {
+                alert(`⏳ Please wait ${Math.ceil(24 - hoursPassed)} more hours before claiming 💜`);
+                return;
+            }
+        }
+        
+        balance += 10;
+        lastClaim = now.toISOString();
+        localStorage.setItem('demoLastClaim', lastClaim);
+        saveData();
+        updateUI();
+        checkClaimStatus();
+        
+        alert('✅ $10 Demo Bonus Claimed! 💚');
+    });
+}
 
 // Quick Actions
 document.querySelectorAll('.action-btn').forEach(btn => {
@@ -138,21 +188,24 @@ document.querySelectorAll('.action-btn').forEach(btn => {
                 }
             }
         } else if (btn.textContent.includes('Team')) {
-            alert('👥 Team feature — DEMO ONLY\n\nInvite friends & earn bonus!\n(This is simulation only) 💚');
+            alert('👥 Team feature — DEMO ONLY\n\nInvite friends & earn bonus!\n(Simulation only) 💚');
         } else if (btn.textContent.includes('Rewards')) {
-            alert('🎁 Rewards feature — DEMO ONLY\n\nEarn points & get free MINISO products!\n(This is simulation only) 💖');
+            alert('🎁 Rewards feature — DEMO ONLY\n\nEarn points & get free MINISO products!\n(Simulation only) 💖');
         }
     });
 });
 
 // Add Demo Funds
-document.querySelector('.btn-primary').addEventListener('click', () => {
-    balance += 1000;
-    addHistory('Demo Funds Added', '+$1,000.00');
-    saveData();
-    updateUI();
-    alert('✅ $1,000 Demo Funds Added! 💚✨');
-});
+const addFundsBtn = document.querySelector('.btn-primary');
+if (addFundsBtn) {
+    addFundsBtn.addEventListener('click', () => {
+        balance += 1000;
+        addHistory('Demo Funds Added', '+$1,000.00');
+        saveData();
+        updateUI();
+        alert('✅ $1,000 Demo Funds Added! 💚✨');
+    });
+}
 
 // Update UI
 function updateUI() {
@@ -180,7 +233,6 @@ function updateUI() {
         }
     }
     
-    // Render History
     renderHistory();
 }
 
@@ -239,11 +291,9 @@ function saveData() {
     localStorage.setItem('demoTotalWithdraw', totalWithdraw.toString());
 }
 
-// Simulate daily earnings (for demo display)
-setInterval(() => {
-    orders.forEach(order => {
-        if (order.active && order.daysLeft > 0) {
-            // In real app this would be server-side
-        }
-    });
-}, 1000 * 60 * 60);
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    updateUI();
+    checkClaimStatus();
+    renderPlans();
+});
