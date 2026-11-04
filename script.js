@@ -1,34 +1,35 @@
 // ==========================================
-// MINISO Member Portal — DEMO VERSION
-// Complete: Splash Bag → Login/Register → Dashboard
+// MINISO x Sanrio Portal — COMPLETE WORKING VERSION
 // ==========================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    // ---------- SPLASH PAPER BAG ----------
+    // ---------- ELEMENTS ----------
     const paperBag = document.getElementById('paperBag');
     const authPanel = document.getElementById('authPanel');
     const splashScreen = document.getElementById('splashScreen');
     const mainDashboard = document.getElementById('mainDashboard');
+    const loginBtn = document.getElementById('loginBtn');
+    const registerBtn = document.getElementById('registerBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
 
-    // ---------- CHECK SESSION ----------
+    // ---------- SKIP IF ALREADY LOGGED IN ----------
     const activeUser = localStorage.getItem('minisoActiveUser');
     if (activeUser) {
-        // Skip splash & auth if already logged in
         splashScreen.style.display = 'none';
         mainDashboard.classList.remove('main-hidden');
         loadUserData(activeUser);
         initApp();
+        return;
     }
 
-    // ---------- OPEN BAG → SHOW AUTH ----------
+    // ---------- TAP PAPER BAG → SHOW LOGIN ----------
     if (paperBag) {
+        paperBag.style.cursor = 'pointer';
         paperBag.addEventListener('click', () => {
-            paperBag.style.transform = 'scale(0.8) rotate(2deg)';
-            paperBag.style.opacity = '0';
+            paperBag.classList.add('opening');
             setTimeout(() => {
                 paperBag.style.display = 'none';
                 authPanel.classList.remove('hidden');
-                authPanel.style.animation = 'fadeInUp 0.5s ease forwards';
             }, 350);
         });
     }
@@ -44,49 +45,55 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ---------- LOGIN ----------
-    const loginBtn = document.getElementById('loginBtn');
+    // ---------- LOGIN FUNCTION ----------
     if (loginBtn) {
         loginBtn.addEventListener('click', () => {
             const user = document.getElementById('loginUser').value.trim();
             const pass = document.getElementById('loginPass').value;
-            if (!user || !pass) return alert('⚠️ Fill in all fields!');
             
+            if (!user || !pass) {
+                alert('⚠️ Ilagay ang Username at Password!');
+                return;
+            }
+
             const savedUser = JSON.parse(localStorage.getItem(`minisoUser_${user}`));
             if (savedUser && savedUser.password !== pass) {
-                return alert('❌ Incorrect password!');
+                alert('❌ Maling Password!');
+                return;
             }
+
             if (!savedUser) {
-                // Auto-register new user on first login
                 createUser(user, pass);
             }
 
             localStorage.setItem('minisoActiveUser', user);
-            closeAuthAndEnter(user);
+            enterDashboard(user);
         });
     }
 
-    // ---------- REGISTER ----------
-    const registerBtn = document.getElementById('registerBtn');
+    // ---------- REGISTER FUNCTION ----------
     if (registerBtn) {
         registerBtn.addEventListener('click', () => {
             const user = document.getElementById('regUser').value.trim();
             const pass = document.getElementById('regPass').value;
-            const refInput = document.getElementById('refCode').value.trim();
+            const refCode = document.getElementById('refCode').value.trim();
             
-            if (!user || !pass) return alert('⚠️ Fill in username & password!');
+            if (!user || !pass) {
+                alert('⚠️ Punan ang lahat ng patlang!');
+                return;
+            }
             if (localStorage.getItem(`minisoUser_${user}`)) {
-                return alert('❌ Username already exists!');
+                alert('❌ May gumagamit na ng pangalang ito!');
+                return;
             }
 
-            createUser(user, pass, refInput);
+            createUser(user, pass, refCode);
             localStorage.setItem('minisoActiveUser', user);
-            closeAuthAndEnter(user);
+            enterDashboard(user);
         });
     }
 
     // ---------- LOGOUT ----------
-    const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
             localStorage.removeItem('minisoActiveUser');
@@ -94,8 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ---------- CLOSE AUTH → SHOW DASHBOARD ----------
-    function closeAuthAndEnter(username) {
+    // ---------- ENTER DASHBOARD ----------
+    function enterDashboard(username) {
         splashScreen.style.opacity = '0';
         setTimeout(() => {
             splashScreen.style.display = 'none';
@@ -105,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 400);
     }
 
-    // ---------- CREATE NEW USER RECORD ----------
+    // ---------- CREATE NEW USER ----------
     function createUser(username, password, refCode = null) {
         const newUser = {
             username,
@@ -120,69 +127,84 @@ document.addEventListener('DOMContentLoaded', () => {
             commissionHistory: [],
             transactions: [],
             referrer: refCode || null,
-            referralCode: username.toUpperCase().slice(0, 6) + Math.floor(Math.random()*999),
+            referralCode: username.toUpperCase().slice(0, 6) + Math.floor(Math.random() * 999),
             level1: [],
             level2: [],
             level3: []
         };
         localStorage.setItem(`minisoUser_${username}`, JSON.stringify(newUser));
-        
-        // Credit referrer if valid
-        if (refCode) creditReferrer(username, refCode);
     }
 
-    // ---------- LOAD CURRENT USER DATA ----------
+    // ---------- GLOBAL VARIABLES ----------
     let currentUser = null;
+
+    // ---------- LOAD USER DATA ----------
     function loadUserData(username) {
         currentUser = JSON.parse(localStorage.getItem(`minisoUser_${username}`));
+        if (!currentUser) {
+            localStorage.removeItem('minisoActiveUser');
+            location.reload();
+            return;
+        }
         document.getElementById('userName').textContent = username;
         updateAllDisplays();
     }
 
-    // ---------- SAVE CURRENT USER ----------
+    // ---------- SAVE USER DATA ----------
     function saveUser() {
         localStorage.setItem(`minisoUser_${currentUser.username}`, JSON.stringify(currentUser));
         updateAllDisplays();
     }
 
-    // ---------- REFERRER COMMISSION LOGIC ----------
-    function creditReferrer(newUser, refCode) {
-        // Level 1 = direct referrer
-        const refUserKey = Object.keys(localStorage).find(
-            k => k.startsWith('minisoUser_') && 
-                 JSON.parse(localStorage.getItem(k)).referralCode === refCode
-        );
-        if (!refUserKey) return;
-
-        const refUser = JSON.parse(localStorage.getItem(refUserKey));
-        refUser.level1.push(newUser);
-        localStorage.setItem(refUserKey, JSON.stringify(refUser));
-
-        // Level 2 & 3 chain
-        if (refUser.referrer) {
-            const l2Key = Object.keys(localStorage).find(
-                k => k.startsWith('minisoUser_') && 
-                     JSON.parse(localStorage.getItem(k)).referralCode === refUser.referrer
-            );
-            if (l2Key) {
-                const l2User = JSON.parse(localStorage.getItem(l2Key));
-                l2User.level2.push(newUser);
-                localStorage.setItem(l2Key, JSON.stringify(l2User));
-                
-                if (l2User.referrer) {
-                    const l3Key = Object.keys(localStorage).find(
-                        k => k.startsWith('minisoUser_') && 
-                             JSON.parse(localStorage.getItem(k)).referralCode === l2User.referrer
-                    );
-                    if (l3Key) {
-                        const l3User = JSON.parse(localStorage.getItem(l3Key));
-                        l3User.level3.push(newUser);
-                        localStorage.setItem(l3Key, JSON.stringify(l3User));
-                    }
-                }
+    // ---------- UPDATE ALL NUMBERS ON SCREEN ----------
+    function updateAllDisplays() {
+        if (!currentUser) return;
+        
+        document.getElementById('dispBalance').textContent = currentUser.balance.toFixed(2);
+        document.getElementById('dispProfit').textContent = (currentUser.balance - 5000).toFixed(2);
+        document.getElementById('teamDeposit').textContent = currentUser.totalDeposit.toFixed(2);
+        document.getElementById('teamComm').textContent = currentUser.totalCommission.toFixed(2);
+        document.getElementById('l1Count').textContent = currentUser.level1.length;
+        document.getElementById('l23Count').textContent = currentUser.level2.length + currentUser.level3.length;
+        document.getElementById('accTotalDep').textContent = currentUser.totalDeposit.toFixed(2);
+        document.getElementById('accTotalWith').textContent = currentUser.totalWithdraw.toFixed(2);
+        document.getElementById('accActive').textContent = currentUser.orders.filter(o => o.active).length;
+        document.getElementById('accBal').textContent = currentUser.balance.toFixed(2);
+        document.getElementById('myRefLink').value = `https://idonstephanie189-a11y.github.io/miniso-portal/?ref=${currentUser.referralCode}`;
+        
+        // Daily claim button status
+        const claimBtn = document.getElementById('dailyClaimBtn');
+        if (claimBtn && currentUser.lastClaim) {
+            const last = new Date(currentUser.lastClaim);
+            const hoursPassed = (new Date() - last) / (1000 * 60 * 60);
+            if (hoursPassed < 24) {
+                claimBtn.disabled = true;
+                claimBtn.textContent = `Try in ${Math.ceil(24 - hoursPassed)}h`;
             }
         }
+
+        renderPlans();
+        renderRedeemLog();
+        renderCommLog();
+        renderTransLog();
+        loadSupportSettings();
     }
+
+    // ---------- NAVIGATION BETWEEN SECTIONS ----------
+    document.querySelectorAll('.nav-link, .feature-card').forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = item.getAttribute('href') || item.getAttribute('data-target');
+            if (!targetId) return;
+            
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            const targetSection = document.querySelector(targetId);
+            if (targetSection) targetSection.classList.add('active');
+            
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.querySelectorAll(`[href="${targetId}"]`).forEach(link => link.classList.add('active'));
+        });
+    });
 
     // ---------- GET PLANS FROM ADMIN ----------
     function getPlans() {
@@ -196,26 +218,6 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('adminPlans', JSON.stringify(plans));
         }
         return plans;
-    }
-
-    // ---------- GET REDEEM CODES FROM ADMIN ----------
-    function getRedeemCodes() {
-        let codes = JSON.parse(localStorage.getItem('adminCodes'));
-        if (!codes) codes = [];
-        return codes;
-    }
-
-    // ---------- GET SUPPORT SETTINGS FROM ADMIN ----------
-    function getSupportSettings() {
-        let settings = JSON.parse(localStorage.getItem('adminSupport'));
-        if (!settings) {
-            settings = {
-                telegramLink: '#',
-                telegramText: 'Official MINISO Demo Group',
-                supportInfo: 'demo@miniso-portal.fake'
-            };
-        }
-        return settings;
     }
 
     // ---------- RENDER PLANS ----------
@@ -246,130 +248,119 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }).join('');
 
-        // Attach click listeners
         container.querySelectorAll('.select-plan').forEach(btn => {
             btn.addEventListener('click', () => {
                 const price = parseFloat(btn.dataset.price);
-                const daily = parseFloat(btn.dataset.daily);
-                const days = parseInt(btn.dataset.days);
                 const name = btn.dataset.name;
 
                 if (currentUser.balance < price) {
-                    return alert('⚠️ Insufficient balance! Recharge first 💜');
+                    alert('⚠️ Kulang ang Balance! Mag-Recharge muna 💜');
+                    return;
                 }
 
                 currentUser.balance -= price;
                 currentUser.totalDeposit += price;
                 currentUser.orders.push({
                     id: Date.now(),
-                    name, price, dailyIncome: daily, daysLeft: days,
-                    date: new Date().toLocaleString(), active: true
+                    name, price,
+                    date: new Date().toLocaleString(),
+                    active: true
                 });
-
-                // Credit commissions to uplines
-                creditCommissions(price);
 
                 addTransaction(`Plan: ${name}`, `-$${price.toFixed(2)}`);
                 saveUser();
-                alert(`✅ Plan Selected: ${name}\n$${price} deducted 💖`);
+                alert(`✅ Napili mo: ${name}\n$${price} nabawas 💖`);
             });
         });
     }
 
-    // ---------- CREDIT COMMISSIONS ----------
-    function creditCommissions(planPrice) {
-        // L1 = 30%, L2 = 5%, L3 = 1%
-        const l1Amount = planPrice * 0.30;
-        const l2Amount = planPrice * 0.05;
-        const l3Amount = planPrice * 0.01;
+    // ---------- RECHARGE ----------
+    document.getElementById('doRecharge')?.addEventListener('click', () => {
+        const amt = parseFloat(document.getElementById('depAmount').value);
+        if (!amt || amt <= 0) {
+            alert('⚠️ Ilagay ang tamang halaga!');
+            return;
+        }
+        currentUser.balance += amt;
+        currentUser.totalDeposit += amt;
+        addTransaction('Recharge', `+$${amt.toFixed(2)}`);
+        document.getElementById('depAmount').value = '';
+        saveUser();
+        alert(`✅ Naidagdag: $${amt} ✨`);
+    });
 
-        // Find and credit uplines
-        Object.keys(localStorage).forEach(key => {
-            if (!key.startsWith('minisoUser_') || key === `minisoUser_${currentUser.username}`) return;
-            
-            const user = JSON.parse(localStorage.getItem(key));
-            let credited = false;
-
-            // Check if current user is in their L1
-            if (user.level1.includes(currentUser.username)) {
-                user.balance += l1Amount;
-                user.totalCommission += l1Amount;
-                user.commissionHistory.unshift({
-                    type: 'Level 1 Commission',
-                    amount: `+$${l1Amount.toFixed(2)}`,
-                    from: currentUser.username,
-                    date: new Date().toLocaleString()
-                });
-                credited = true;
-            }
-            // L2
-            if (!credited && user.level2.includes(currentUser.username)) {
-                user.balance += l2Amount;
-                user.totalCommission += l2Amount;
-                user.commissionHistory.unshift({
-                    type: 'Level 2 Commission',
-                    amount: `+$${l2Amount.toFixed(2)}`,
-                    from: currentUser.username,
-                    date: new Date().toLocaleString()
-                });
-                credited = true;
-            }
-            // L3
-            if (!credited && user.level3.includes(currentUser.username)) {
-                user.balance += l3Amount;
-                user.totalCommission += l3Amount;
-                user.commissionHistory.unshift({
-                    type: 'Level 3 Commission',
-                    amount: `+$${l3Amount.toFixed(2)}`,
-                    from: currentUser.username,
-                    date: new Date().toLocaleString()
-                });
-            }
-
-            localStorage.setItem(key, JSON.stringify(user));
-        });
-    }
-
-    // ---------- REDEEM CODE ----------
-    const redeemBtn = document.getElementById('redeemGo');
-    if (redeemBtn) {
-        redeemBtn.addEventListener('click', () => {
-            const codeInput = document.getElementById('redeemCodeInput').value.trim();
-            const codes = getRedeemCodes();
-            const match = codes.find(c => c.code === codeInput && c.active && !c.usedBy?.includes(currentUser.username));
-
-            if (!match) {
-                document.getElementById('redeemStatus').textContent = '❌ Invalid or already used code';
-                document.getElementById('redeemStatus').style.color = '#FF6B6B';
-                return;
-            }
-
-            // Mark as used
-            if (!match.usedBy) match.usedBy = [];
-            match.usedBy.push(currentUser.username);
-            localStorage.setItem('adminCodes', JSON.stringify(codes));
-
-            // Add funds
-            currentUser.balance += match.amount;
-            currentUser.redeemHistory.unshift({
-                code: codeInput,
-                amount: `+$${match.amount.toFixed(2)}`,
-                date: new Date().toLocaleString()
-            });
-            addTransaction('Redeem Code', `+$${match.amount.toFixed(2)}`);
-            saveUser();
-
-            document.getElementById('redeemStatus').textContent = `✅ Redeemed! +$${match.amount} added 💖`;
-            document.getElementById('redeemStatus').style.color = '#7ED9B5';
-            document.getElementById('redeemCodeInput').value = '';
-        });
-    }
+    // ---------- WITHDRAW ----------
+    document.getElementById('doWithdraw')?.addEventListener('click', () => {
+        const amt = parseFloat(document.getElementById('withAmount').value);
+        if (!amt || amt <= 0) {
+            alert('⚠️ Ilagay ang halaga!');
+            return;
+        }
+        if (currentUser.balance < amt) {
+            alert('⚠️ Kulang ang Balance!');
+            return;
+        }
+        currentUser.balance -= amt;
+        currentUser.totalWithdraw += amt;
+        addTransaction('Withdraw', `-$${amt.toFixed(2)}`);
+        document.getElementById('withAmount').value = '';
+        saveUser();
+        alert(`✅ Na-withdraw: $${amt} 💌`);
+    });
 
     // ---------- DAILY CLAIM ----------
-    const claimBtn = document.getElementById('dailyClaimBtn');
-    if (claimBtn) {
-        claimBtn.addEventListener('click', () => {
-            const now = new Date();
-            if (currentUser.lastClaim) {
-                const last = new Date(currentUser.lastClaim);
-                const hoursPass
+    document.getElementById('dailyClaimBtn')?.addEventListener('click', () => {
+        if (currentUser.lastClaim) {
+            const last = new Date(currentUser.lastClaim);
+            const hoursPassed = (new Date() - last) / (1000 * 60 * 60);
+            if (hoursPassed < 24) {
+                alert(`⏳ Subukan ulit pagkalipas ng ${Math.ceil(24 - hoursPassed)} oras`);
+                return;
+            }
+        }
+        currentUser.balance += 10;
+        currentUser.lastClaim = new Date().toISOString();
+        addTransaction('Daily Bonus', '+$10.00');
+        saveUser();
+        alert('✅ Nakuha! +$10.00 💖');
+    });
+
+    // ---------- REDEEM CODE ----------
+    document.getElementById('redeemGo')?.addEventListener('click', () => {
+        const codeInput = document.getElementById('redeemCodeInput').value.trim();
+        if (!codeInput) {
+            alert('⚠️ Ilagay ang Code!');
+            return;
+        }
+
+        let codes = JSON.parse(localStorage.getItem('adminCodes')) || [];
+        const match = codes.find(c => c.code === codeInput && c.active && !c.usedBy?.includes(currentUser.username));
+
+        if (!match) {
+            document.getElementById('redeemStatus').textContent = '❌ Di Tama o Nagamit na';
+            document.getElementById('redeemStatus').style.color = '#FF6B6B';
+            return;
+        }
+
+        if (!match.usedBy) match.usedBy = [];
+        match.usedBy.push(currentUser.username);
+        localStorage.setItem('adminCodes', JSON.stringify(codes));
+
+        currentUser.balance += match.amount;
+        currentUser.redeemHistory.unshift({
+            code: codeInput,
+            amount: `+$${match.amount.toFixed(2)}`,
+            date: new Date().toLocaleString()
+        });
+        addTransaction('Redeem Code', `+$${match.amount.toFixed(2)}`);
+        document.getElementById('redeemCodeInput').value = '';
+        document.getElementById('redeemStatus').textContent = `✅ Nakuha! +$${match.amount} 💖`;
+        document.getElementById('redeemStatus').style.color = '#7ED9B5';
+        saveUser();
+    });
+
+    // ---------- COPY REF LINK ----------
+    document.getElementById('copyRefBtn')?.addEventListener('click', () => {
+        navigator.clipboard.writeText(document.getElementById('myRefLink').value);
+        alert('✅ Nakopya na! 💌');
+   
