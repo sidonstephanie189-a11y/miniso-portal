@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINISO – Member Portal</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">MINISO</div>
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#plans">Plans</a>
+            <a href="#rewards">Rewards</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+            <a href="admin.html" class="admin-link">Admin Panel</a>
+        </nav>
+    </header>
+
+    <!-- Home Section -->
+    <main>
+        <section id="home" class="hero">
+            <h1>Welcome to MINISO Member Portal</h1>
+            <p>Your trusted platform — earn rewards and grow with us!</p>
+            <a href="#plans" class="btn">View Plans</a>
+        </section>
+
+        <!-- Plans Section — Circular Buttons Style -->
+        <section id="plans" class="plans-section">
+            <h2>Choose Your Plan</h2>
+            <p>Pick the plan that fits you best</p>
+            
+            <div class="plan-circles">
+                <div class="plan-circle" onclick="selectPlan('Hourly Plan')">
+                    Hourly Plan
+                </div>
+                <div class="plan-circle" onclick="selectPlan('Lock-In Plan')">
+                    Lock-In Plan
+                </div>
+                <div class="plan-circle" onclick="selectPlan('Premium Plan')">
+                    Premium Plan
+                </div>
+            </div>
+            
+            <div id="planResult" class="plan-result"></div>
+        </section>
+
+        <!-- Everyday Rewards — Blind Box Style -->
+        <section id="rewards" class="rewards-section">
+            <h2>🎁 Everyday Rewards</h2>
+            <p>Click to open — get ₱5 to ₱20 instantly!</p>
+
+            <div class="blind-box-container">
+                <div class="blind-box" onclick="openBlindBox(this)">❓</div>
+                <div class="blind-box" onclick="openBlindBox(this)">❓</div>
+                <div class="blind-box" onclick="openBlindBox(this)">❓</div>
+                <div class="blind-box" onclick="openBlindBox(this)">❓</div>
+                <div class="blind-box" onclick="openBlindBox(this)">❓</div>
+            </div>
+
+            <div class="reward-result" id="rewardResult"></div>
+            
+            <div class="reward-history">
+                <h3>Your Rewards History</h3>
+                <ul id="historyList"></ul>
+                <p id="totalEarned">Total Earned: ₱0</p>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="about-section">
+            <h2>About Us</h2>
+            <p>MINISO Member Portal — your lifestyle and rewards platform. We bring you quality products and exciting rewards every day!</p>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact-section">
+            <h2>Contact Us</h2>
+            <p>Email: support@miniso-portal.local | Location: Angeles City, Pampanga</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 MINISO Member Portal — For Educational Purposes Only</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
