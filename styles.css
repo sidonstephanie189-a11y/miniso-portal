@@ -1,116 +1,110 @@
-/* ========== POP-UP STYLES ========== */
-.popup-overlay {
+/* ==========================================
+   MINISO THEME — Sanrio / Cute Pastel Style
+   ========================================== */
+:root {
+    --miniso-pink: #FF6B9B;
+    --miniso-pink-light: #FFE4EE;
+    --miniso-mint: #7ED9B5;
+    --miniso-mint-light: #E4F9F0;
+    --miniso-lavender: #C9B6F2;
+    --miniso-yellow: #FFE066;
+    --miniso-orange: #FFB366;
+    --miniso-cream: #FFFAF5;
+    --miniso-text: #5C4B64;
+    --miniso-text-light: #9A8BA8;
+    --shadow-soft: 0 4px 20px rgba(255, 107, 155, 0.12);
+    --shadow-bag: 0 8px 30px rgba(255, 107, 155, 0.25);
+    --radius-sm: 12px;
+    --radius-md: 20px;
+    --radius-lg: 30px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #FFF5F9, #F9F4FF);
+    min-height: 100vh;
+    color: var(--miniso-text);
+    overflow-x: hidden;
+}
+
+.demo-banner {
+    background: linear-gradient(90deg, #FFE066, #FFD700);
+    text-align: center;
+    padding: 8px;
+    font-weight: bold;
+    font-size: 12px;
+    color: #7A6000;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    z-index: 99999;
+}
+
+/* ==========================================
+   SPLASH SCREEN — PAPER BAG DESIGN
+   ========================================== */
+.splash-overlay {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(180deg, #FFF5F9, #F9F4FF);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    animation: fadeInOverlay 0.4s ease;
+    padding: 20px;
+    padding-top: 40px;
 }
 
-@keyframes fadeInOverlay {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.popup-content {
-    background: white;
-    padding: 40px 30px;
-    border-radius: 30px;
+.splash-container {
     text-align: center;
-    max-width: 400px;
-    width: 90%;
-    box-shadow: 0 10px 40px rgba(255, 143, 177, 0.3);
-    animation: popUp 0.5s ease;
+    max-width: 420px;
+    width: 100%;
 }
 
-@keyframes popUp {
-    0% { transform: scale(0.7) translateY(30px); opacity: 0; }
-    100% { transform: scale(1) translateY(0); opacity: 1; }
-}
-
-/* Paper Bag Design */
-.paper-bag {
+/* MINISO Official Paper Bag */
+.miniso-paperbag {
     position: relative;
-    width: 220px;
-    height: 260px;
-    margin: 0 auto 25px;
+    width: 260px;
+    height: 320px;
+    margin: 0 auto 30px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    animation: bagBounce 2s ease-in-out infinite;
 }
 
-.bag-handle {
+@keyframes bagBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.miniso-paperbag:hover { transform: scale(1.05); }
+
+.bag-handles {
     position: absolute;
-    top: -5px;
+    top: -8px;
     left: 50%;
     transform: translateX(-50%);
-    width: 100px;
-    height: 45px;
-    border: 5px solid #FF8FB1;
-    border-bottom: none;
-    border-radius: 50px 50px 0 0;
+    width: 140px;
+    height: 50px;
 }
 
-.bag-body {
+.handle {
     position: absolute;
-    top: 35px;
-    left: 0;
-    width: 100%;
-    height: 220px;
-    background: linear-gradient(135deg, #FFE4EC, #FFF4F8);
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    box-shadow: inset 0 0 0 4px #FFC6D9;
+    top: 0;
+    width: 55px;
+    height: 55px;
+    border: 5px solid var(--miniso-pink);
+    border-bottom: none;
+    border-radius: 50% 50% 0 0;
+    background: transparent;
 }
 
-.bag-logo {
-    font-size: 32px;
-    font-weight: bold;
-    background: linear-gradient(90deg, #FF8FB1, #B5EBCD);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 10px;
-}
-
-.bag-tagline {
-    font-size: 18px;
-    color: #5A4B60;
-    font-weight: 600;
-    margin-bottom: 5px;
-}
-
-.bag-sub {
-    font-size: 14px;
-    color: #8B7D90;
-}
-
-.enter-btn {
-    font-size: 18px;
-    padding: 15px 50px;
-    margin-bottom: 10px;
-}
-
-.popup-note {
-    font-size: 12px;
-    color: #B8A9C4;
-}
-
-.main-hidden {
-    display: none;
-}
-
-/* Responsive */
-@media(max-width: 768px) {
-    .nav-links { display: none; }
-    .quick-actions { grid-template-columns: repeat(2, 1fr); }
-    .section { padding: 15px; }
-    .paper-bag { width: 180px; height: 230px; }
-    .bag-logo { font-size: 26px; }
-}
+.handle.left { left: 0; }
+.handle
