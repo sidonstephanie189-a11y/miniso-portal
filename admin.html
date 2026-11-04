@@ -3,77 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel — MINISO Portal</title>
+    <title>Admin — MINISO Demo</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .login-container {
+            max-width: 400px;
+            margin: 80px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(255, 143, 177, 0.15);
+        }
+        .login-container h2 { text-align: center; margin-bottom: 25px; color: #FF8FB1; }
+        .login-container input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 2px solid #DCD0FF;
+            border-radius: 12px;
+            font-size: 16px;
+        }
+        .login-container button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(90deg, #FF8FB1, #B5EBCD);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .dashboard { display: none; padding: 30px; max-width: 1000px; margin: 0 auto; }
+        .dashboard h2 { color: #FF8FB1; }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 10px 0;
+            box-shadow: 0 4px 15px rgba(255, 143, 177, 0.1);
+        }
+        .logout-btn {
+            background: #FF8FB1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    <div id="loginSection">
-        <div class="login-box">
-            <h2>🔐 Admin Login</h2>
-            <input type="text" id="adminUser" placeholder="Username">
-            <input type="password" id="adminPass" placeholder="Password">
-            <button onclick="adminLogin()">Sign In</button>
-            <p style="margin-top:15px; font-size:12px; color:#888;">
-                For demo: Username: admin | Password: admin123
-            </p>
-        </div>
+    <div class="demo-banner">
+        ⚠️ DEMO / SIMULATION ONLY — NOT REAL MONEY — FOR EDUCATIONAL PURPOSES ⚠️
     </div>
 
-    <div id="adminDashboard" style="display:none;">
-        <div class="admin-container">
-            <a href="index.html" class="back-link">← Back to Main Site</a>
+    <!-- Login -->
+    <div id="loginSection" class="login-container">
+        <h2>🔐 Admin Login</h2>
+        <p style="text-align:center; color:#8B7D90; font-size:13px;">Demo: admin / admin123</p>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboardSection" class="dashboard">
+        <button class="logout-btn" onclick="logout()">← Logout</button>
+        <h2>🌸 Admin Dashboard — MINISO Demo</h2>
+        <p style="color:#8B7D90; margin-bottom:20px;">This is a simulation for learning purposes only.</p>
+        
+        <div class="stat-card">
+            <h3>📊 Overview</h3>
+            <p>Total Members (Demo): <strong id="totalMembers">1</strong></p>
+            <p>Active Plans: <strong id="activePlans">0</strong></p>
+            <p>Total Demo Volume: <strong id="totalVolume">$0.00</strong></p>
+        </div>
+
+        <div class="stat-card">
+            <h3>🛠️ Manage Plans</h3>
+            <p>Add, edit, or remove investment plans (Demo)</p>
+            <button style="background:#B5EBCD; border:none; padding:8px 16px; border-radius:20px; cursor:pointer;">Add New Plan</button>
+        </div>
+
+        <div class="stat-card">
+            <h3>📢 Announcements</h3>
+            <textarea placeholder="Post news or updates..." style="width:100%; padding:10px; border-radius:10px; border:1px solid #ddd; min-height:80px;"></textarea>
+            <button style="margin-top:10px; background:#FF8FB1; color:white; border:none; padding:8px 20px; border-radius:20px; cursor:pointer;">Post Announcement</button>
+        </div>
+
+        <br>
+        <a href="index.html" style="color:#FF8FB1;">← Back to Main Portal</a>
+    </div>
+
+    <script>
+        function login() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
             
-            <div class="admin-header">
-                <h1>🛡️ Admin Dashboard</h1>
-                <p>Welcome! Here's your platform overview.</p>
-            </div>
-
-            <!-- Stats Cards -->
-            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:20px;">
-                <div class="admin-card" style="text-align:center;">
-                    <h3>Total Rewards Given</h3>
-                    <p style="font-size:28px; font-weight:bold; color:#00a862;" id="statTotalRewards">₱0</p>
-                </div>
-                <div class="admin-card" style="text-align:center;">
-                    <h3>Plan Selections</h3>
-                    <p style="font-size:28px; font-weight:bold; color:#00a862;" id="statTotalPlans">0</p>
-                </div>
-                <div class="admin-card" style="text-align:center;">
-                    <h3>Total Boxes Opened</h3>
-                    <p style="font-size:28px; font-weight:bold; color:#00a862;" id="statBoxesOpened">0</p>
-                </div>
-            </div>
-
-            <!-- Rewards Log -->
-            <div class="admin-card">
-                <h3>📋 Rewards History Log</h3>
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Amount</th>
-                            <th>Date & Time</th>
-                        </tr>
-                    </thead>
-                    <tbody id="rewardsLog">
-                        <tr><td colspan="2" style="text-align:center; color:#888;">No data yet</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Plans Log -->
-            <div class="admin-card">
-                <h3>📋 Selected Plans Log</h3>
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Plan Name</th>
-                            <th>Date & Time</th>
-                        </tr>
-                    </thead>
-                    <tbody id="plansLog">
-                        <tr><td colspan="2" style="text-align:center; color:#888;">No data yet</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <button onclick="logout()" style="margin-top:20px; padding:10px 25px; background:#e74c3c; color:white; border:none; border-radius:8px; cursor:
+            if (user === 'admin' && pass === 'admin123') {
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('dashboardSection').style.display = 'block';
+                updateStats();
+            } else {
+                alert('❌ Incorrect credentials! Demo: admin / admin123');
+            }
+        }
+        
+        function logout() {
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+        
+        function updateStats() {
+            const orders = JSON.parse(localStorage.getItem('demoOrders')) || [];
+            document.getElementById('activePlans').textContent = orders.length;
+            const total = orders.reduce((sum, o) => sum + o.price, 0);
+            document.getElementById('totalVolume').textContent = `$${total.toFixed(2)}`;
+        }
+    </script>
+</body>
+</html>
