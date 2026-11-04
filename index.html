@@ -3,113 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MINISO x Sanrio — Member Portal</title>
+    <title>MINISO Member Portal — DEMO</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <!-- DEMO BANNER -->
     <div class="demo-banner">
-        ⚠️ DEMO / SIMULATION ONLY — NOT REAL MONEY — EDUCATIONAL PURPOSES ⚠️
+        ⚠️ DEMO / SIMULATION ONLY — NOT REAL MONEY — FOR EDUCATIONAL PURPOSES ⚠️
     </div>
 
-    <!-- DIRETSO NA DASHBOARD WALANG LOGIN -->
-    <div id="mainDashboard">
-        <nav class="top-nav">
-            <div class="nav-left">
-                <span class="logo-sm">🌸 MINISO × Sanrio</span>
-                <span class="greet">Hi, Friend! 💖</span>
+    <!-- NAVIGATION -->
+    <nav class="navbar">
+        <div class="logo">🌸 MINISO</div>
+        <ul class="nav-links">
+            <li><a href="#home" class="nav-link active">Home</a></li>
+            <li><a href="#plans" class="nav-link">Plans</a></li>
+            <li><a href="#redeem" class="nav-link">Redeem Code</a></li>
+            <li><a href="#team" class="nav-link">Team</a></li>
+            <li><a href="#account" class="nav-link">Account</a></li>
+            <li><a href="#support" class="nav-link">Support</a></li>
+            <li><a href="admin.html" class="admin-btn">Admin Panel</a></li>
+        </ul>
+    </nav>
+
+    <!-- HOME SECTION -->
+    <section id="home" class="section active">
+        <div class="container">
+            <div class="profile-card">
+                <div class="profile-info">
+                    <div class="avatar">👤</div>
+                    <div>
+                        <h3>Hello, Member! 💖</h3>
+                        <span class="vip-badge">VIP 1 — Demo</span>
+                    </div>
+                </div>
+                <div class="balance-card">
+                    <p class="label">Demo Balance</p>
+                    <h1 class="balance">$5,000.00</h1>
+                    <p class="profit">Demo Profit: <span class="green">+$150.00</span></p>
+                    <button class="btn-primary" id="addFundsBtn">+ Add Demo Funds</button>
+                </div>
             </div>
-        </nav>
 
-        <div class="dashboard-content">
-            <!-- HOME -->
-            <section id="home" class="panel active">
-                <h2>Your Sparkly Balance 💎</h2>
-                <div class="big-balance">$<span id="dispBalance">5000.00</span></div>
-                <p class="profit">Total Profit: +$<span id="dispProfit">0.00</span></p>
-                
-                <div class="btn-row">
-                    <button id="quickRecharge" class="cute-btn pink">💳 Recharge</button>
-                    <button id="quickWithdraw" class="cute-btn mint">💰 Withdraw</button>
+            <div class="daily-checkin">
+                <h3>✨ Daily Bonus</h3>
+                <div class="checkin-card">
+                    <div class="bonus-amount">$10</div>
+                    <div>
+                        <p>Claim every 24 hours</p>
+                        <button id="claimBtn" class="btn-secondary">Claim Now</button>
+                    </div>
                 </div>
+            </div>
 
-                <div class="daily-box">
-                    <p>Daily Bonus 🎁</p>
-                    <button id="dailyClaimBtn" class="cute-btn yellow">Claim $10 Now ✨</button>
-                </div>
-            </section>
-
-            <!-- PLANS -->
-            <section id="plans" class="panel">
-                <h2>✨ Pick Your Plan</h2>
-                <div id="plansContainer" class="cards-grid">
-                    <p>Loading plans...</p>
-                </div>
-            </section>
-
-            <!-- REDEEM -->
-            <section id="redeem" class="panel">
-                <h2>🎁 Redeem Code</h2>
-                <input type="text" id="redeemInput" placeholder="Enter code here" class="cute-input">
-                <button id="redeemBtn" class="cute-btn pink">Redeem Now 💖</button>
-                <p id="redeemMsg"></p>
-                <h3>History</h3>
-                <div id="redeemLog"><p>Nothing yet~ 🐱</p></div>
-            </section>
-
-            <!-- TEAM -->
-            <section id="team" class="panel">
-                <h2>👫 My Team</h2>
-                <p class="rates">L1: 30% | L2: 5% | L3: 1%</p>
-                <div class="stats-grid">
-                    <div class="stat-card"><p>Team Deposit</p><h3>$<span id="teamDep">0.00</span></h3></div>
-                    <div class="stat-card"><p>Commissions</p><h3>$<span id="teamComm">0.00</span></h3></div>
-                    <div class="stat-card"><p>Level 1</p><h3 id="l1Count">0</h3></div>
-                    <div class="stat-card"><p>Level 2+3</p><h3 id="l23Count">0</h3></div>
-                </div>
-                <h3>Your Invite Link</h3>
-                <div class="link-box">
-                    <input type="text" id="refLinkOut" readonly>
-                    <button id="copyLink" class="cute-btn mint">Copy</button>
-                </div>
-            </section>
-
-            <!-- ACCOUNT -->
-            <section id="account" class="panel">
-                <h2>💎 My Account</h2>
-                <div class="stats-grid">
-                    <div class="stat-card"><p>Total Deposit</p><h3>$<span id="totDep">0.00</span></h3></div>
-                    <div class="stat-card"><p>Total Withdraw</p><h3>$<span id="totWith">0.00</span></h3></div>
-                    <div class="stat-card"><p>Active Plans</p><h3 id="activeCount">0</h3></div>
-                    <div class="stat-card"><p>Balance</p><h3>$<span id="balOut">0.00</span></h3></div>
-                </div>
-                <h3>Recharge</h3>
-                <input type="number" id="depIn" placeholder="Amount" class="cute-input">
-                <button id="doDep" class="cute-btn pink">Add Funds ✨</button>
-                <h3>Withdraw</h3>
-                <input type="number" id="withIn" placeholder="Amount" class="cute-input">
-                <button id="doWith" class="cute-btn mint">Request 💌</button>
-                <h3>Transactions</h3>
-                <div id="transLog"><p>No activity yet~ 🌸</p></div>
-            </section>
-
-            <!-- SUPPORT -->
-            <section id="support" class="panel">
-                <h2>💬 Help & Community</h2>
-                <p>Telegram: <a id="tgLink" href="#" target="_blank">Join Group 💌</a></p>
-                <p>Support: demo@miniso.fake</p>
-            </section>
-
-            <!-- BOTTOM NAV -->
-            <nav class="bottom-nav">
-                <button data-panel="home" class="nav-btn active">🏠 Home</button>
-                <button data-panel="plans" class="nav-btn">🛍️ Plans</button>
-                <button data-panel="redeem" class="nav-btn">🎁 Redeem</button>
-                <button data-panel="team" class="nav-btn">👫 Team</button>
-                <button data-panel="account" class="nav-btn">💎 Account</button>
-                <button data-panel="support" class="nav-btn">💬 Help</button>
-            </nav>
+            <div class="quick-actions">
+                <button class="action-btn" data-target="recharge">💳 Recharge</button>
+                <button class="action-btn" data-target="withdraw">💰 Withdraw</button>
+                <button class="action-btn" data-target="team">👥 Team</button>
+                <button class="action-btn" data-target="redeem">🎁 Redeem</button>
+            </div>
         </div>
+    </section>
+
+    <!-- PLANS SECTION -->
+    <section id="plans" class="section">
+        <div class="container">
+            <h2>✨ Choose Your Plan</h2>
+            <p class="subtitle">All plans are for DEMO / SIMULATION purposes only</p>
+            <div id="plansContainer" class="plans-grid">
+                <p class="empty-text">Loading plans... 💜</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- REDEEM CODE SECTION -->
+    <section id="redeem" class="section">
+        <div class="container">
+            <h2>🎁 Redeem Code</h2>
+            <p class="subtitle">Enter valid code to add funds — Codes managed by Admin</p>
+            <div class="card">
+                <input type="text" id="redeemInput" placeholder="Enter redemption code" class="form-input">
+                <button id="redeemBtn" class="btn-primary">Redeem Now</button>
+                <p id="redeemMsg" class="msg-text"></p>
+            </div>
+            <div class="card" style="margin-top:20px;">
+                <h3>📜 Redemption History</h3>
+                <div id="redeemHistory">
+                    <p class="empty-text">No codes redeemed yet 💜</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TEAM / REFERRAL SECTION -->
+    <section id="team" class="section">
+        <div class="container">
+            <h2>👥 My Team & Referrals</h2>
+            <p class="subtitle">Referral Commission: Level 1 = 30% | Level 2 = 5% | Level 3 = 1%</p>
+            
+            <div class="account-grid">
+                <div class="account-card">
+                    <p>Total Team Deposit</p>
+                    <h3 id="totalTeamDeposit">$0.00</h3>
+                </div>
+                <div class="account-card">
+                    <p>Total Commission Earned</p>
+                    <h3 id="totalCommission">$0.00</h3>
+                </div>
+                <div class="account-card">
+                    <p>Level 1 Members</p>
+                    <h3 id="level1Count">0</h3>
+                </div>
+                <div class="account-card">
+                    <p>Level 2 + 3 Members</p>
+                    <h3 id="level23Count">0</h3>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🔗 Your Referral Link</h3>
+                <div class="referral-link">
+                    <input type="text" id="refLinkInput" value="https://sidonstephanie189-a11y.github.io/miniso-portal/?ref=demo123" readonly>
+                    <button id="copyRefBtn" class="btn-secondary">Copy</button>
+                </div>
+                <p style="margin-top:10px; font-size:13px; color:#8B7D90;">Share this link — commissions are demo/simulation only</p>
+            </div>
+
+            <div class="card">
+                <h3>📋 Commission History</h3>
+                <div id="commissionHistory">
+                    <p class="empty-text">No commissions yet 💖</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ACCOUNT SECTION -->
+    <section id="account" class="section">
+        <div class="container">
+            <h2>👤 My Account</h2>
+            <div class="account-grid">
+                <div class="account-card">
+                    <p>Total Demo Deposit</p>
+                    <h3 id="totalDeposit">$0.00</h3>
+                </div>
+                <div class="account-card">
+                    <p>Total Demo Withdraw</p>
+                    <h3 id="totalWithdraw">$0.00</h3>
+                </div>
+                <div class="account-card">
+                    <p>Active Orders</p>
+                    <h3 id="activeOrders">0</h3>
+                </div>
+                <div class="account-card">
+                    <p>Account Balance</p>
+                    <h3 id="accBalance">$0.00</h3>
+                </div>
+            </div>
+            <div class="card">
+                <h3>💳 Recharge / Deposit</h3>
+                <input type="number" id="rechargeAmt" placeholder="Amount ($)" class="form-input">
+                <button id="rechargeBtn" class="btn-primary">Recharge Demo Funds</button>
+            </div>
+            <div class="card">
+                <h3>💰 Withdraw Funds</h3>
+                <input type="number" id="withdrawAmt" placeholder="Amount ($)" class="form-input">
+                <button id="withdrawBtn" class="btn-secondary">Request Withdrawal</button>
+            </div>
+            <div class="card">
+                <h3>📄 Transaction History</h3>
+                <div id="historyList">
+                    <p class="empty-text">No transactions yet! 💖</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SUPPORT / TELEGRAM SECTION -->
+    <section id="support" class="section">
+        <div class="container">
+            <h2>💬 Customer Service & Community</h2>
+            <p class="subtitle">Get help and join our community — Links updated by Admin</p>
+            <div class="card">
+                <h3>📞 Official Telegram Group</h3>
+                <p id="telegramDesc">Loading link...</p>
+                <a id="telegramLink" href="#" target="_blank" class="btn-primary" style="display:inline-block; margin-top:10px;">Join Group</a>
+            </div>
+            <div class="card">
+                <h3>📧 Customer Support</h3>
+                <p id="supportInfo">Loading contact info...</p>
+                <p style="margin-top:10px; color:#8B7D90;">For educational demo purposes — not real support</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- BOTTOM NAV -->
+    <div class="bottom-nav">
+        <a href="#home" class="bot-nav-link active" data-section="home">🏠 Home</a>
+        <a href="#plans" class="bot-nav-link" data-section="plans">🛍️ Plans</a>
+        <a href="#redeem" class="bot-nav-link" data-section="redeem">🎁 Redeem</a>
+        <a href="#team" class="bot-nav-link" data-section="team">👥 Team</a>
+        <a href="#account" class="bot-nav-link" data-section="account">👤 Account</a>
+        <a href="#support" class="bot-nav-link" data-section="support">💬 Support</a>
     </div>
 
     <script src="script.js"></script>
