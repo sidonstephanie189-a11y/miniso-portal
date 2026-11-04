@@ -35,15 +35,8 @@
             cursor: pointer;
             margin-top: 10px;
         }
-        .dashboard { display: none; padding: 30px; max-width: 1000px; margin: 0 auto; }
+        .dashboard { display: none; padding: 30px; max-width: 1100px; margin: 0 auto; }
         .dashboard h2 { color: #FF8FB1; }
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin: 10px 0;
-            box-shadow: 0 4px 15px rgba(255, 143, 177, 0.1);
-        }
         .logout-btn {
             background: #FF8FB1;
             color: white;
@@ -53,14 +46,62 @@
             cursor: pointer;
             margin-bottom: 20px;
         }
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(255, 143, 177, 0.1);
+            margin-bottom: 25px;
+        }
+        .card h3 { margin-bottom: 20px; color: #685075; }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .form-grid input, .form-grid select {
+            padding: 10px 12px;
+            border: 2px solid #E4D9F2;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+        .btn-add {
+            background: linear-gradient(90deg, #68D391, #B5EBCD);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .plan-item {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #F3E9FC;
+            gap: 10px;
+        }
+        .plan-actions button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+        .btn-edit { background: #FFE4EC; color: #C95C8C; }
+        .btn-delete { background: #FFE4E4; color: #C94444; }
+        .empty { text-align: center; color: #A898B3; padding: 20px; }
     </style>
 </head>
 <body>
     <div class="demo-banner">
-        ⚠️ DEMO / SIMULATION ONLY — NOT REAL MONEY — FOR EDUCATIONAL PURPOSES ⚠️
+        ⚠️ DEMO / SIMULATION ONLY — NOT REAL MONEY — EDUCATIONAL PURPOSES ⚠️
     </div>
 
-    <!-- Login -->
+    <!-- LOGIN -->
     <div id="loginSection" class="login-container">
         <h2>🔐 Admin Login</h2>
         <p style="text-align:center; color:#8B7D90; font-size:13px;">Demo: admin / admin123</p>
@@ -69,36 +110,158 @@
         <button onclick="login()">Login</button>
     </div>
 
-    <!-- Dashboard -->
+    <!-- DASHBOARD -->
     <div id="dashboardSection" class="dashboard">
         <button class="logout-btn" onclick="logout()">← Logout</button>
         <h2>🌸 Admin Dashboard — MINISO Demo</h2>
-        <p style="color:#8B7D90; margin-bottom:20px;">This is a simulation for learning purposes only.</p>
-        
-        <div class="stat-card">
-            <h3>📊 Overview</h3>
-            <p>Total Members (Demo): <strong id="totalMembers">1</strong></p>
-            <p>Active Plans: <strong id="activePlans">0</strong></p>
-            <p>Total Demo Volume: <strong id="totalVolume">$0.00</strong></p>
+        <p style="color:#8B7D90; margin-bottom:25px;">Manage Plans — Add, Edit, Remove — Changes show on Main Page instantly</p>
+
+        <!-- ADD / EDIT PLAN FORM -->
+        <div class="card">
+            <h3 id="formTitle">➕ Add New Plan</h3>
+            <div class="form-grid">
+                <input type="text" id="planName" placeholder="Plan Name e.g. Pink Blossom">
+                <input type="number" id="planPrice" placeholder="Price ($)">
+                <input type="number" id="planDaily" placeholder="Daily Income ($)">
+                <input type="number" id="planDays" placeholder="Duration (Days)">
+                <select id="planTag">
+                    <option value="Standard">Standard</option>
+                    <option value="Popular">Popular</option>
+                    <option value="VIP">VIP</option>
+                </select>
+            </div>
+            <button class="btn-add" id="submitBtn" onclick="savePlan()">Save Plan</button>
+            <button style="display:none; margin-left:10px; background:#ddd; border:none; padding:10px 20px; border-radius:50px; cursor:pointer;" id="cancelBtn" onclick="cancelEdit()">Cancel</button>
         </div>
 
-        <div class="stat-card">
-            <h3>🛠️ Manage Plans</h3>
-            <p>Add, edit, or remove investment plans (Demo)</p>
-            <button style="background:#B5EBCD; border:none; padding:8px 16px; border-radius:20px; cursor:pointer;">Add New Plan</button>
-        </div>
-
-        <div class="stat-card">
-            <h3>📢 Announcements</h3>
-            <textarea placeholder="Post news or updates..." style="width:100%; padding:10px; border-radius:10px; border:1px solid #ddd; min-height:80px;"></textarea>
-            <button style="margin-top:10px; background:#FF8FB1; color:white; border:none; padding:8px 20px; border-radius:20px; cursor:pointer;">Post Announcement</button>
+        <!-- PLANS LIST -->
+        <div class="card">
+            <h3>📋 All Plans</h3>
+            <div id="plansList"></div>
         </div>
 
         <br>
-        <a href="index.html" style="color:#FF8FB1;">← Back to Main Portal</a>
+        <a href="index.html" style="color:#FF8FB1; font-weight:bold;">← Go to Main Portal to see your plans</a>
     </div>
 
     <script>
+        let editingId = null;
+
+        // Default plans if none exist
+        const defaultPlans = [
+            { id: 1, name: 'Pink Blossom', price: 100, daily: 5, days: 30, tag: 'Standard' },
+            { id: 2, name: 'Lavender Premium', price: 500, daily: 30, days: 60, tag: 'Popular' },
+            { id: 3, name: 'Mint Luxury', price: 2000, daily: 150, days: 180, tag: 'VIP' }
+        ];
+
+        function getPlans() {
+            let plans = JSON.parse(localStorage.getItem('adminPlans'));
+            if (!plans) {
+                plans = defaultPlans;
+                savePlans(plans);
+            }
+            return plans;
+        }
+
+        function savePlans(plans) {
+            localStorage.setItem('adminPlans', JSON.stringify(plans));
+            renderPlans();
+        }
+
+        function renderPlans() {
+            const list = document.getElementById('plansList');
+            const plans = getPlans();
+            
+            if (plans.length === 0) {
+                list.innerHTML = '<p class="empty">No plans yet. Add your first plan above! 💜</p>';
+                return;
+            }
+
+            list.innerHTML = plans.map(p => `
+                <div class="plan-item">
+                    <div>
+                        <strong>${p.name}</strong> — 
+                        $${p.price} | Daily $${p.daily} | ${p.days} days | 
+                        <span style="color:${p.tag==='Popular'?'#FF8FB1':p.tag==='VIP'?'#B5EBCD':'#DCD0FF'}">${p.tag}</span>
+                    </div>
+                    <div class="plan-actions">
+                        <button class="btn-edit" onclick="editPlan(${p.id})">Edit</button>
+                        <button class="btn-delete" onclick="deletePlan(${p.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function savePlan() {
+            const name = document.getElementById('planName').value.trim();
+            const price = parseFloat(document.getElementById('planPrice').value);
+            const daily = parseFloat(document.getElementById('planDaily').value);
+            const days = parseInt(document.getElementById('planDays').value);
+            const tag = document.getElementById('planTag').value;
+
+            if (!name || !price || !daily || !days) {
+                alert('⚠️ Fill in all fields!');
+                return;
+            }
+
+            let plans = getPlans();
+
+            if (editingId) {
+                // Update existing
+                plans = plans.map(p => p.id === editingId 
+                    ? { ...p, name, price, daily, days, tag }
+                    : p
+                );
+                editingId = null;
+                document.getElementById('formTitle').textContent = '➕ Add New Plan';
+                document.getElementById('cancelBtn').style.display = 'none';
+            } else {
+                // Add new
+                const newId = plans.length ? Math.max(...plans.map(p => p.id)) + 1 : 1;
+                plans.push({ id: newId, name, price, daily, days, tag });
+            }
+
+            savePlans(plans);
+            clearForm();
+            alert('✅ Plan saved! Go to Main Portal to see it 💖');
+        }
+
+        function editPlan(id) {
+            const plan = getPlans().find(p => p.id === id);
+            if (!plan) return;
+
+            editingId = id;
+            document.getElementById('planName').value = plan.name;
+            document.getElementById('planPrice').value = plan.price;
+            document.getElementById('planDaily').value = plan.daily;
+            document.getElementById('planDays').value = plan.days;
+            document.getElementById('planTag').value = plan.tag;
+            
+            document.getElementById('formTitle').textContent = '✏️ Edit Plan';
+            document.getElementById('cancelBtn').style.display = 'inline-block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function deletePlan(id) {
+            if (!confirm('❌ Delete this plan? Cannot undo!')) return;
+            savePlans(getPlans().filter(p => p.id !== id));
+        }
+
+        function cancelEdit() {
+            editingId = null;
+            clearForm();
+            document.getElementById('formTitle').textContent = '➕ Add New Plan';
+            document.getElementById('cancelBtn').style.display = 'none';
+        }
+
+        function clearForm() {
+            document.getElementById('planName').value = '';
+            document.getElementById('planPrice').value = '';
+            document.getElementById('planDaily').value = '';
+            document.getElementById('planDays').value = '';
+            document.getElementById('planTag').value = 'Standard';
+        }
+
         function login() {
             const user = document.getElementById('username').value;
             const pass = document.getElementById('password').value;
@@ -106,24 +269,18 @@
             if (user === 'admin' && pass === 'admin123') {
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('dashboardSection').style.display = 'block';
-                updateStats();
+                renderPlans();
             } else {
-                alert('❌ Incorrect credentials! Demo: admin / admin123');
+                alert('❌ Incorrect! Demo: admin / admin123');
             }
         }
-        
+
         function logout() {
             document.getElementById('loginSection').style.display = 'block';
             document.getElementById('dashboardSection').style.display = 'none';
             document.getElementById('username').value = '';
             document.getElementById('password').value = '';
-        }
-        
-        function updateStats() {
-            const orders = JSON.parse(localStorage.getItem('demoOrders')) || [];
-            document.getElementById('activePlans').textContent = orders.length;
-            const total = orders.reduce((sum, o) => sum + o.price, 0);
-            document.getElementById('totalVolume').textContent = `$${total.toFixed(2)}`;
+            cancelEdit();
         }
     </script>
 </body>
