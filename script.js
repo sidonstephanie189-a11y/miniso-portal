@@ -42,64 +42,73 @@ navLinks.forEach(link => {
         document.querySelectorAll(`[data-section="${targetId}"], [href="#${targetId}"]`).forEach(l => l.classList.add('active'));
     });
 });
+// ==========================================
+// MINISO Member Portal — DEMO VERSION
+// DYNAMIC PLANS from Admin Panel
+// ==========================================
 
-// Plan Selection
-document.querySelectorAll('.btn-plan').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const planName = btn.getAttribute('data-plan');
-        const price = parseFloat(btn.getAttribute('data-price'));
-        
-        if (balance < price) {
-            alert('⚠️ Demo balance is insufficient! Add demo funds first 💜');
-            return;
-        }
-        
-        balance -= price;
-        totalDeposit += price;
-        
-        const newOrder = {
-            id: Date.now(),
-            plan: planName,
-            price: price,
-            date: new Date().toLocaleString(),
-            daysLeft: planName === 'Pink Blossom' ? 30 : planName === 'Lavender Premium' ? 60 : 180,
-            dailyIncome: planName === 'Pink Blossom' ? 5 : planName === 'Lavender Premium' ? 30 : 150,
-            active: true
-        };
-        
-        orders.push(newOrder);
-        saveData();
-        updateUI();
-        
-        alert(`✅ Plan Selected: ${planName}\n$${price} deducted from demo balance 💖`);
-    });
-});
+// Data storage
+let orders = JSON.parse(localStorage.getItem('demoOrders')) || [];
+let balance = parseFloat(localStorage.getItem('demoBalance')) || 5000;
+let totalDeposit = parseFloat(localStorage.getItem('demoTotalDeposit')) || 0;
+let totalWithdraw = parseFloat(localStorage.getItem('demoTotalWithdraw')) || 0;
+let lastClaim = localStorage.getItem('demoLastClaim') || null;
 
-// Claim Daily Bonus
-if (claimBtn) {
-    claimBtn.addEventListener('click', () => {
-        const now = new Date();
-        
-        if (lastClaim) {
-            const lastDate = new Date(lastClaim);
-            const hoursPassed = (now - lastDate) / (1000 * 60 * 60);
-            
-            if (hoursPassed < 24) {
-                alert(`⏳ Please wait ${Math.ceil(24 - hoursPassed)} more hours before claiming 💜`);
-                return;
-            }
-        }
-        
-        balance += 10;
-        lastClaim = now.toISOString();
-        localStorage.setItem('demoLastClaim', lastClaim);
-        saveData();
-        updateUI();
-        checkClaimStatus();
-        
-        alert('✅ $10 Demo Bonus Claimed! 💚');
-    });
+// DOM Elements
+const navLinks = document.querySelectorAll('.nav-link, .bot-nav-link');
+const sections = document.querySelectorAll('.section');
+const balanceEl = document.querySelector('.balance');
+const profitEl = document.querySelector('.profit .green');
+const ordersListEl = document.getElementById('ordersList');
+const totalDepositEl = document.getElementById('totalDeposit');
+const totalWithdrawEl = document.getElementById('totalWithdraw');
+const activeOrdersEl = document.getElementById('activeOrders');
+const historyListEl = document.getElementById('historyList');
+const claimBtn = document.getElementById('claimBtn');
+const plansContainer = document.getElementById('plansContainer');
+
+// Default plans if none exist
+const defaultPlans = [
+    { id: 1, name: 'Pink Blossom', price: 100, daily: 5, days: 30, tag: 'Standard' },
+    { id: 2, name: 'Lavender Premium', price: 500, daily: 30, days: 60, tag: 'Popular' },
+    { id: 3, name: 'Mint Luxury', price: 2000, daily: 150, days: 180, tag: 'VIP' }
+];
+
+// Get plans from Admin storage
+function getPlans() {
+    let plans = JSON.parse(localStorage.getItem('adminPlans'));
+    if (!plans) {
+        plans = defaultPlans;
+        localStorage.setItem('adminPlans', JSON.stringify(plans));
+    }
+    return plans;
 }
+
+// Render plans on page
+function renderPlans() {
+    const plans = getPlans();
+    
+    plansContainer.innerHTML = plans.map(plan => {
+        const isFeatured = plan.tag === 'Popular';
+        const tagClass = plan.tag === 'Popular' ? 'popular' : '';
+        
+        return `
+            <div class="plan-card ${isFeatured ? 'featured' : ''}">
+                <span class="plan-tag ${tagClass}">${plan.tag}</span>
+                <h3>${plan.name}</h3>
+                <p class="price">$${plan.price} <small>(Demo)</small></p>
+                <ul class="plan-features">
+                    <li>Daily Demo Income: $${plan.daily}</li>
+                    <li>Duration: ${plan.days} Days</li>
+                    <li>Unlimited purchase</li>
+                </ul>
+                <button class="btn-plan ${isFeatured ? 'featured-btn' : ''}" 
+                    data-plan="${plan.name}" 
+                    data-price="${plan.price}"
+                    data-daily="${plan.daily}"
+                    data-days="${plan.days}">
+                    Select Plan
+                </
 
 // Quick Actions
 document.querySelectorAll('.action-btn').forEach(btn => {
