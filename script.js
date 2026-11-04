@@ -1,149 +1,299 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // ---------- DEFAULT USER DATA WALANG LOGIN ----------
-    let currentUser = {
-        username: 'Guest',
-        balance: 5000,
-        totalDeposit: 0,
-        totalWithdraw: 0,
-        totalCommission: 0,
-        lastClaim: null,
-        orders: [],
-        redeemHistory: [],
-        commissionHistory: [],
-        transactions: [],
-        referralCode: 'GUEST123',
-        level1: [],
-        level2: [],
-        level3: []
-    };
+// ==========================================
+// MINISO Member Portal — DEMO VERSION
+// DYNAMIC PLANS from Admin Panel
+// ==========================================
 
-    // ---------- SAVE TO LOCALSTORAGE ----------
-    function saveUser() {
-        localStorage.setItem('minisoGuest', JSON.stringify(currentUser));
-        updateAll();
+// Data storage
+let orders = JSON.parse(localStorage.getItem('demoOrders')) || [];
+let balance = parseFloat(localStorage.getItem('demoBalance')) || 5000;
+let totalDeposit = parseFloat(localStorage.getItem('demoTotalDeposit')) || 0;
+let totalWithdraw = parseFloat(localStorage.getItem('demoTotalWithdraw')) || 0;
+let lastClaim = localStorage.getItem('demoLastClaim') || null;
+
+// DOM Elements
+const navLinks = document.querySelectorAll('.nav-link, .bot-nav-link');
+const sections = document.querySelectorAll('.section');
+const balanceEl = document.querySelector('.balance');
+const profitEl = document.querySelector('.profit .green');
+const ordersListEl = document.getElementById('ordersList');
+const totalDepositEl = document.getElementById('totalDeposit');
+const totalWithdrawEl = document.getElementById('totalWithdraw');
+const activeOrdersEl = document.getElementById('activeOrders');
+const historyListEl = document.getElementById('historyList');
+const claimBtn = document.getElementById('claimBtn');
+const plansContainer = document.getElementById('plansContainer');
+
+// Default plans if none exist
+const defaultPlans = [
+    { id: 1, name: 'Pink Blossom', price: 100, daily: 5, days: 30, tag: 'Standard' },
+    { id: 2, name: 'Lavender Premium', price: 500, daily: 30, days: 60, tag: 'Popular' },
+    { id: 3, name: 'Mint Luxury', price: 2000, daily: 150, days: 180, tag: 'VIP' }
+];
+
+// Get plans from Admin storage
+function getPlans() {
+    let plans = JSON.parse(localStorage.getItem('adminPlans'));
+    if (!plans) {
+        plans = defaultPlans;
+        localStorage.setItem('adminPlans', JSON.stringify(plans));
     }
+    return plans;
+}
 
-    // ---------- LOAD KUNG MAY NAISAVE NA ----------
-    const saved = localStorage.getItem('minisoGuest');
-    if (saved) currentUser = JSON.parse(saved);
-
-    // ---------- UPDATE ALL NUMBERS ----------
-    function updateAll() {
-        document.getElementById('dispBalance').textContent = currentUser.balance.toFixed(2);
-        document.getElementById('dispProfit').textContent = (currentUser.balance - 5000).toFixed(2);
-        document.getElementById('teamDep').textContent = currentUser.totalDeposit.toFixed(2);
-        document.getElementById('teamComm').textContent = currentUser.totalCommission.toFixed(2);
-        document.getElementById('l1Count').textContent = currentUser.level1.length;
-        document.getElementById('l23Count').textContent = currentUser.level2.length + currentUser.level3.length;
-        document.getElementById('totDep').textContent = currentUser.totalDeposit.toFixed(2);
-        document.getElementById('totWith').textContent = currentUser.totalWithdraw.toFixed(2);
-        document.getElementById('activeCount').textContent = currentUser.orders.filter(o => o.active).length;
-        document.getElementById('balOut').textContent = currentUser.balance.toFixed(2);
-        document.getElementById('refLinkOut').value = `https://${window.location.host}?ref=${currentUser.referralCode}`;
+// Render plans on page
+function renderPlans() {
+    if (!plansContainer) return;
+    
+    const plans = getPlans();
+    
+    plansContainer.innerHTML = plans.map(plan => {
+        const isFeatured = plan.tag === 'Popular';
+        const tagClass = plan.tag === 'Popular' ? 'popular' : '';
         
-        // Daily button
-        const btn = document.getElementById('dailyClaimBtn');
-        if (currentUser.lastClaim) {
-            const hours = (new Date() - new Date(currentUser.lastClaim)) / 3600000;
-            if (hours < 24) {
-                btn.disabled = true;
-                btn.textContent = `Wait ${Math.ceil(24 - hours)}h`;
-            } else {
-                btn.disabled = false;
-                btn.textContent = 'Claim $10 Now ✨';
+        return `
+            <div class="plan-card ${isFeatured ? 'featured' : ''}">
+                <span class="plan-tag ${tagClass}">${plan.tag}</span>
+                <h3>${plan.name}</h3>
+                <p class="price">$${plan.price} <small>(Demo)</small></p>
+                <ul class="plan-features">
+                    <li>Daily Demo Income: $${plan.daily}</li>
+                    <li>Duration: ${plan.days} Days</li>
+                    <li>Unlimited purchase</li>
+                </ul>
+                <button class="btn-plan ${isFeatured ? 'featured-btn' : ''}" 
+                    data-plan="${plan.name}" 
+                    data-price="${plan.price}"
+                    data-daily="${plan.daily}"
+                    data-days="${plan.days}">
+                    Select Plan
+                </button>
+            </div>
+        `;
+    }).join('');
+
+    // Re-attach click listeners
+    attachPlanListeners();
+}
+
+// Attach click events to plan buttons
+function attachPlanListeners() {
+    document.querySelectorAll('.btn-plan').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const planName = btn.getAttribute('data-plan');
+            const price = parseFloat(btn.getAttribute('data-price'));
+            const daily = parseFloat(btn.getAttribute('data-daily'));
+            const days = parseInt(btn.getAttribute('data-days'));
+            
+            if (balance < price) {
+                alert('⚠️ Demo balance is insufficient! Add demo funds first 💜');
+                return;
+            }
+            
+            balance -= price;
+            totalDeposit += price;
+            
+            const newOrder = {
+                id: Date.now(),
+                plan: planName,
+                price: price,
+                dailyIncome: daily,
+                daysLeft: days,
+                date: new Date().toLocaleString(),
+                active: true
+            };
+            
+            orders.push(newOrder);
+            saveData();
+            updateUI();
+            
+            alert(`✅ Plan Selected: ${planName}\n$${price} deducted from demo balance 💖`);
+        });
+    });
+}
+
+// Navigation
+navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute('data-section') || link.getAttribute('href').substring(1);
+        
+        // Update sections
+        sections.forEach(sec => sec.classList.remove('active'));
+        const targetSection = document.getElementById(targetId);
+        if (targetSection) targetSection.classList.add('active');
+        
+        // Update nav active states
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        document.querySelectorAll('.bot-nav-link').forEach(l => l.classList.remove('active'));
+        document.querySelectorAll(`[data-section="${targetId}"], [href="#${targetId}"]`).forEach(l => l.classList.add('active'));
+        
+        // Re-render plans when Plans section opens
+        if (targetId === 'plans') {
+            renderPlans();
+        }
+    });
+});
+
+// Claim Daily Bonus
+if (claimBtn) {
+    claimBtn.addEventListener('click', () => {
+        const now = new Date();
+        
+        if (lastClaim) {
+            const lastDate = new Date(lastClaim);
+            const hoursPassed = (now - lastDate) / (1000 * 60 * 60);
+            
+            if (hoursPassed < 24) {
+                alert(`⏳ Please wait ${Math.ceil(24 - hoursPassed)} more hours before claiming 💜`);
+                return;
             }
         }
-
-        renderPlans();
-    }
-
-    // ---------- NAVIGATION BOTTOM ----------
-    document.querySelectorAll('.bottom-nav button').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.bottom-nav button').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            const id = btn.dataset.panel;
-            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        });
+        
+        balance += 10;
+        lastClaim = now.toISOString();
+        localStorage.setItem('demoLastClaim', lastClaim);
+        saveData();
+        updateUI();
+        checkClaimStatus();
+        
+        alert('✅ $10 Demo Bonus Claimed! 💚');
     });
+}
 
-    // ---------- PLANS ----------
-    function getPlans() {
-        return [
-            {id:1, name:'Pink Blossom', price:100, daily:5, days:30, tag:'Standard'},
-            {id:2, name:'Lavender Premium', price:500, daily:30, days:60, tag:'Popular'},
-            {id:3, name:'Mint Luxury', price:2000, daily:150, days:180, tag:'VIP'}
-        ];
+// Quick Actions
+document.querySelectorAll('.action-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        if (btn.textContent.includes('Deposit')) {
+            const amount = prompt('Enter demo deposit amount:');
+            if (amount && !isNaN(amount) && parseFloat(amount) > 0) {
+                balance += parseFloat(amount);
+                totalDeposit += parseFloat(amount);
+                addHistory('Deposit', `+$${parseFloat(amount).toFixed(2)}`);
+                saveData();
+                updateUI();
+                alert(`✅ $${amount} added to demo balance! 💖`);
+            }
+        } else if (btn.textContent.includes('Withdraw')) {
+            const amount = prompt('Enter demo withdraw amount:');
+            if (amount && !isNaN(amount) && parseFloat(amount) > 0) {
+                if (balance >= parseFloat(amount)) {
+                    balance -= parseFloat(amount);
+                    totalWithdraw += parseFloat(amount);
+                    addHistory('Withdraw', `-$${parseFloat(amount).toFixed(2)}`);
+                    saveData();
+                    updateUI();
+                    alert(`✅ $${amount} withdrawn from demo balance! 💜`);
+                } else {
+                    alert('⚠️ Insufficient demo balance!');
+                }
+            }
+        } else if (btn.textContent.includes('Team')) {
+            alert('👥 Team feature — DEMO ONLY\n\nInvite friends & earn bonus!\n(Simulation only) 💚');
+        } else if (btn.textContent.includes('Rewards')) {
+            alert('🎁 Rewards feature — DEMO ONLY\n\nEarn points & get free MINISO products!\n(Simulation only) 💖');
+        }
+    });
+});
+
+// Add Demo Funds
+const addFundsBtn = document.querySelector('.btn-primary');
+if (addFundsBtn) {
+    addFundsBtn.addEventListener('click', () => {
+        balance += 1000;
+        addHistory('Demo Funds Added', '+$1,000.00');
+        saveData();
+        updateUI();
+        alert('✅ $1,000 Demo Funds Added! 💚✨');
+    });
+}
+
+// Update UI
+function updateUI() {
+    if (balanceEl) balanceEl.textContent = `$${balance.toFixed(2)}`;
+    if (profitEl) profitEl.textContent = `+$${(balance - 5000).toFixed(2)}`;
+    if (totalDepositEl) totalDepositEl.textContent = `$${totalDeposit.toFixed(2)}`;
+    if (totalWithdrawEl) totalWithdrawEl.textContent = `$${totalWithdraw.toFixed(2)}`;
+    if (activeOrdersEl) activeOrdersEl.textContent = orders.filter(o => o.active).length;
+    
+    // Render Orders
+    if (ordersListEl) {
+        if (orders.length === 0) {
+            ordersListEl.innerHTML = '<p class="empty-text">No orders yet. Select a plan to start! 💜</p>';
+        } else {
+            ordersListEl.innerHTML = orders.map(order => `
+                <div class="order-item">
+                    <h4>${order.plan}</h4>
+                    <p>Price: $${order.price.toFixed(2)} (Demo)</p>
+                    <p>Daily Income: $${order.dailyIncome} (Demo)</p>
+                    <p>Days Left: ${order.daysLeft}</p>
+                    <p>Ordered: ${order.date}</p>
+                    <span style="color: ${order.active ? '#68D391' : '#FF8FB1'}">${order.active ? '✅ Active' : '✅ Completed'}</span>
+                </div>
+            `).reverse().join('');
+        }
     }
+    
+    renderHistory();
+}
 
-    function renderPlans() {
-        const cont = document.getElementById('plansContainer');
-        cont.innerHTML = getPlans().map(p => `
-            <div class="plan-card ${p.tag==='Popular'?'featured':''}">
-                <span class="tag">${p.tag}</span>
-                <h3>${p.name}</h3>
-                <p class="price">$${p.price}</p>
-                <p>Daily: $${p.daily}</p>
-                <p>Duration: ${p.days} days</p>
-                <button class="pick-plan" data-price="${p.price}" data-name="${p.name}">Select 💖</button>
+// Check Claim Status
+function checkClaimStatus() {
+    if (!claimBtn) return;
+    
+    if (!lastClaim) {
+        claimBtn.disabled = false;
+        claimBtn.textContent = 'Claim Now';
+        return;
+    }
+    
+    const hoursPassed = (new Date() - new Date(lastClaim)) / (1000 * 60 * 60);
+    
+    if (hoursPassed < 24) {
+        claimBtn.disabled = true;
+        claimBtn.textContent = `Wait ${Math.ceil(24 - hoursPassed)}h`;
+    } else {
+        claimBtn.disabled = false;
+        claimBtn.textContent = 'Claim Now';
+    }
+}
+
+// History Management
+function addHistory(type, amount) {
+    const history = JSON.parse(localStorage.getItem('demoHistory')) || [];
+    history.unshift({ type, amount, date: new Date().toLocaleString() });
+    localStorage.setItem('demoHistory', JSON.stringify(history));
+}
+
+function renderHistory() {
+    if (!historyListEl) return;
+    const history = JSON.parse(localStorage.getItem('demoHistory')) || [];
+    
+    if (history.length === 0) {
+        historyListEl.innerHTML = '<p class="empty-text">No transactions yet! 💖</p>';
+    } else {
+        historyListEl.innerHTML = history.map(item => `
+            <div class="history-item">
+                <div>
+                    <strong>${item.type}</strong>
+                    <br><small>${item.date}</small>
+                </div>
+                <div class="amount">${item.amount}</div>
             </div>
         `).join('');
-
-        cont.querySelectorAll('.pick-plan').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const price = parseFloat(btn.dataset.price);
-                if (currentUser.balance < price) return alert('⚠️ Kulang ang balance!');
-                currentUser.balance -= price;
-                currentUser.totalDeposit += price;
-                currentUser.orders.push({name:btn.dataset.name, price, active:true});
-                saveUser();
-                alert(`✅ Napili mo: ${btn.dataset.name}`);
-            });
-        });
     }
+}
 
-    // ---------- RECHARGE ----------
-    document.getElementById('doDep').addEventListener('click', () => {
-        const amt = parseFloat(document.getElementById('depIn').value);
-        if (!amt || amt <= 0) return alert('⚠️ Ilagay ang halaga!');
-        currentUser.balance += amt;
-        currentUser.totalDeposit += amt;
-        document.getElementById('depIn').value = '';
-        saveUser();
-        alert(`✅ Naidagdag: $${amt}`);
-    });
+// Save Data
+function saveData() {
+    localStorage.setItem('demoOrders', JSON.stringify(orders));
+    localStorage.setItem('demoBalance', balance.toString());
+    localStorage.setItem('demoTotalDeposit', totalDeposit.toString());
+    localStorage.setItem('demoTotalWithdraw', totalWithdraw.toString());
+}
 
-    // ---------- WITHDRAW ----------
-    document.getElementById('doWith').addEventListener('click', () => {
-        const amt = parseFloat(document.getElementById('withIn').value);
-        if (!amt || amt <= 0) return alert('⚠️ Ilagay ang halaga!');
-        if (currentUser.balance < amt) return alert('⚠️ Kulang ang balance!');
-        currentUser.balance -= amt;
-        currentUser.totalWithdraw += amt;
-        document.getElementById('withIn').value = '';
-        saveUser();
-        alert(`✅ Na-withdraw: $${amt}`);
-    });
-
-    // ---------- DAILY CLAIM ----------
-    document.getElementById('dailyClaimBtn').addEventListener('click', () => {
-        if (currentUser.lastClaim) {
-            const hours = (new Date() - new Date(currentUser.lastClaim)) / 3600000;
-            if (hours < 24) return alert(`⏳ Subukan ulit pagkalipas ng ${Math.ceil(24-hours)} oras`);
-        }
-        currentUser.balance += 10;
-        currentUser.lastClaim = new Date().toISOString();
-        saveUser();
-        alert('✅ Nakuha! +$10.00');
-    });
-
-    // ---------- COPY LINK ----------
-    document.getElementById('copyLink').addEventListener('click', () => {
-        navigator.clipboard.writeText(document.getElementById('refLinkOut').value);
-        alert('✅ Nakopya na!');
-    });
-
-    // ---------- UNANG PAGBUBUKAS ----------
-    updateAll();
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    updateUI();
+    checkClaimStatus();
+    renderPlans();
 });
